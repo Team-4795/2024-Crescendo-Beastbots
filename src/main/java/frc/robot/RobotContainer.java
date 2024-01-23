@@ -92,7 +92,6 @@ public class RobotContainer {
         "Flywheel FF Characterization",
         new FeedForwardCharacterization(
             flywheel, flywheel::runVolts, flywheel::getCharacterizationVelocity));
-
     // Configure the button bindings
     configureButtonBindings();
   }

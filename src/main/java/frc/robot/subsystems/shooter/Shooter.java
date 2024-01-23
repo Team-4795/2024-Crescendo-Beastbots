@@ -5,8 +5,12 @@ import frc.robot.util.CANSpark;
 import frc.robot.util.CANSpark.Controller;
 
 public class Shooter extends SubsystemBase {
-    private CANSpark leftShooterMotor = new CANSpark.Motor(Controller.MAX, ShooterConstants.leftCanID).configure();
-    private CANSpark rightShooterMotor = new CANSpark.Motor(Controller.MAX, ShooterConstants.rightCanID).inverted(true).follows(leftShooterMotor).configure();
+
+    private ShooterIO io;
+    private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+
+    
+
     private double requestedSpeed = 0.0;
 
     public Shooter(){
@@ -19,6 +23,6 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic(){
-        leftShooterMotor.set(requestedSpeed);
+        // leftShooterMotor.set(requestedSpeed);
     }
 }

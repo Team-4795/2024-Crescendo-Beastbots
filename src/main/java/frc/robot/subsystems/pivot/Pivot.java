@@ -22,11 +22,14 @@ public class Pivot extends SubsystemBase {
     private double targetAngle = 0.0;
     private static Pivot instance;
 
-    public static Pivot getInstance(PivotIO io){
+    public static Pivot getInstance(){
+       return instance;
+    }
+
+    public static void init(PivotIO io) {
         if(instance == null){
             instance = new Pivot(io);
         }
-        return instance;
     }
 
     public Pivot(PivotIO io) {

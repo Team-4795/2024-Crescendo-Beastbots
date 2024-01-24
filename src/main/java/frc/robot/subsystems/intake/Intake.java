@@ -12,14 +12,24 @@ public class Intake extends SubsystemBase {
     private double coolintakespeed = 0.0;
     private IntakeIO io;
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-    public Intake() {
-        
+    private static Intake instance;
+    public Intake(IntakeIO io) {
+        this.io = io;
+    }
+
+    public static Intake getInstance() {
+        return instance;
+    }
+
+    public static void init(IntakeIO io) {
+        if (instance == null) {
+            instance = new Intake(io);
+        }
     }
 
     public void setIntakeSpeed(double speeed){
         coolintakespeed = speeed;
     }
-
 
     @Override
     public void periodic(){

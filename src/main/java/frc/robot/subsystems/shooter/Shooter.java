@@ -5,16 +5,25 @@ import frc.robot.util.CANSpark;
 import frc.robot.util.CANSpark.Controller;
 
 public class Shooter extends SubsystemBase {
-
     private ShooterIO io;
     private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-    
-
     private double requestedSpeed = 0.0;
+    private static Shooter instance;
 
-    public Shooter(){
+    private Shooter(ShooterIO io){
+        this.io = io;
+        io.updateInputs(inputs);
+    }
 
+    public static Shooter getInstance() {
+        return instance;
+    }
+
+    public static void init(ShooterIO io) {
+        if (instance == null) {
+            instance = new Shooter(io);
+        }
     }
 
     public void setRequestedSpeed(double requestedSpeed) {

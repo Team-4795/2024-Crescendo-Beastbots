@@ -12,12 +12,23 @@ public class Shooter extends SubsystemBase {
 // Autolog, auto logs. 
     private ShooterIO io;
     private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-    // Defines requested speed as 0.0
+
     private double requestedSpeed = 0.0;
+    private static Shooter instance;
 
-    //Constructor, creates an instant of a class. 
-    public Shooter(){
+    private Shooter(ShooterIO io){
+        this.io = io;
+        io.updateInputs(inputs);
+    }
 
+    public static Shooter getInstance() {
+        return instance;
+    }
+
+    public static void init(ShooterIO io) {
+        if (instance == null) {
+            instance = new Shooter(io);
+        }
     }
 
     // 

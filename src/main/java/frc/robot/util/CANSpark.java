@@ -168,6 +168,10 @@ public class CANSpark {
         return absEncoder.getVelocity();
     }
 
+    public double getCurrent(){
+        return motor.getOutputCurrent();
+    }
+
     public double getVoltage(){
         return motor.getBusVoltage();
     }

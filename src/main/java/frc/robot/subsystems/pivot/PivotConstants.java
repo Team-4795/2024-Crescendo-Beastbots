@@ -10,4 +10,10 @@ public class PivotConstants {
     public static final double kD = 0;
     public static final double maxV = 0;
     public static final double maxA = 0;
+    public static final double gearing = 0;
+    public static final double MOI = 0;
+    public static final double armLength = 0;
+    public static final double minAngle = 0;
+    public static final double maxAngle = 0;
+    public static final double initialAngle = 0;
 }

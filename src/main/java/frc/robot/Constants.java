@@ -34,4 +34,15 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public record Setpoint(double intake, double shooter) {}
+
+  public static class StateConstants {
+    public static final Setpoint intake = new Setpoint(0, 0);
+    public static final Setpoint shooter = new Setpoint(0, 0);
+  }
+
+
+
+
 }

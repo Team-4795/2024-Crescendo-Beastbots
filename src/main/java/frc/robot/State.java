@@ -1,19 +1,17 @@
 package frc.robot;
 
+import frc.robot.Constants.Setpoint;
+import frc.robot.Constants.StateConstants;
+
 public enum State {
-    Intake(
-       0,
-       0,
-       0
-    );
+    Intake(StateConstants.intake),
+    Shoot(StateConstants.shooter);
 
-    double pivotAngle;
-    double intakeSpeed;
-    double shooterSpeed;
 
-    State(double pivotAngle, double intakeSpeed, double shooterSpeed) {
-        this.pivotAngle = pivotAngle;
-        this.intakeSpeed = intakeSpeed;
-        this.shooterSpeed = shooterSpeed;
+
+    Setpoint setpoint;
+
+    State(Setpoint setpoint) {
+        this.setpoint = setpoint;
     }
 }

@@ -4,7 +4,6 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.pivot.Pivot;
 
 public class StateManager {
     private static StateManager mInstance;
@@ -13,12 +12,12 @@ public class StateManager {
 
     public void setState(State state) {
         this.state = state;
+        setSetpoints();
     }
 
     public void setSetpoints() {
-        Shooter.getInstance().setShootingSpeed(this.state.shooterSpeed);
-        Pivot.getInstance().setGoal(this.state.pivotAngle);
-        Intake.getInstance().setIntakeSpeed(this.state.intakeSpeed);
+        Shooter.getInstance().setRequestedSpeed(this.state.setpoint.shooter());
+        Intake.getInstance().setIntakeSpeed(this.state.setpoint.intake());
     }
 
     public static StateManager getInstance() {

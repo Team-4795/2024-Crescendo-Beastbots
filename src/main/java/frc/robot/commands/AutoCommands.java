@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.paths.TestPath;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.flywheel.Flywheel;
 
@@ -15,7 +15,9 @@ public class AutoCommands {
     }
 
     public Command testAuto(){
-        return new TestPath().load();
+        return new InstantCommand(() -> {
+            
+        });
     }
 
     public Command driveFFCharacterization(){

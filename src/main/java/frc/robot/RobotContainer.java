@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoCommands;
+import frc.robot.commands.NamedCommandManager;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
 import frc.robot.subsystems.drive.DriveIOSim;
@@ -75,6 +76,9 @@ public class RobotContainer {
         flywheel = new Flywheel(new FlywheelIO() {});
         break;
     }
+
+    // Register named commands
+    NamedCommandManager.register();
 
     // Set up auto commands.
     autoCommands = new AutoCommands(drive, flywheel);

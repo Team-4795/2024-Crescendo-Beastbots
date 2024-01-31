@@ -23,6 +23,7 @@ package frc.robot;
  */
 public final class Constants {
   public static final Mode currentMode = Mode.REAL;
+  public static final double DT = 0.02;
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -34,4 +35,15 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public record Setpoint(double intake, double shooter) {}
+
+  public static class StateConstants {
+    public static final Setpoint intake = new Setpoint(0, 0);
+    public static final Setpoint shooter = new Setpoint(0, 0);
+  }
+
+
+
+
 }

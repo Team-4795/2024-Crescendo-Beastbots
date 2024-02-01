@@ -2,25 +2,19 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 7.0
+      "x": 2,
+      "y": 2
     },
-    "rotation": -25.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Run Flywheel"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "go to 1st ring, intake and shoot"
+            "pathName": "go to 2nd ring, intake and shoot"
           }
         }
       ]

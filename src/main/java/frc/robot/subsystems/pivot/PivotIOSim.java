@@ -29,4 +29,9 @@ public class PivotIOSim implements PivotIO {
         inputs.appliedVolts = appliedVolts;
         inputs.currentOutput = pivotSim.getCurrentDrawAmps();
     }
+
+    public void setPivotVoltage(double volts) {
+        appliedVolts = volts;
+        pivotSim.setInputVoltage(appliedVolts);
+    }
 }

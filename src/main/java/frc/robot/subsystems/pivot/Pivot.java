@@ -18,23 +18,19 @@ public class Pivot extends SubsystemBase {
                 PivotConstants.maxA
             )
         );
-
     private double targetAngle = 0.0;
     private static Pivot instance;
-
-    public static Pivot getInstance(){
-       return instance;
+    
+    private Pivot(PivotIO io) {
+        this.io = io;
+        io.updateInputs(inputs);
     }
 
-    public static void init(PivotIO io) {
+    public static Pivot init(PivotIO io) {
         if(instance == null){
             instance = new Pivot(io);
         }
-    }
-
-    public Pivot(PivotIO io) {
-        this.io = io;
-        io.updateInputs(inputs);
+        return instance;
     }
 
     public void setTargetAngle(double targetAngle) {
@@ -49,10 +45,14 @@ public class Pivot extends SubsystemBase {
         return targetAngle;
     }
 
+    public static Pivot getInstance(){
+       return instance;
+    }
+
     @Override
     public void periodic(){
         io.setPivotVoltage(
-            controller.calculate(inputs.angleRev, 0)
+            controller.calculate(inputs.angleRev, targetAngle)
         );
     }
 }

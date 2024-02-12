@@ -21,6 +21,11 @@ public class PivotIOSim implements PivotIO {
         );
     }
 
+    public void setPivotVoltage(double volts) {
+        appliedVolts = volts;
+        pivotSim.setInputVoltage(appliedVolts);
+    }
+
     @Override
     public void updateInputs(PivotIOInputs inputs) {
         pivotSim.update(Constants.DT);
@@ -28,10 +33,5 @@ public class PivotIOSim implements PivotIO {
         inputs.angleRevPerSec = pivotSim.getVelocityRadPerSec() / (2 * Math.PI);
         inputs.appliedVolts = appliedVolts;
         inputs.currentOutput = pivotSim.getCurrentDrawAmps();
-    }
-
-    public void setPivotVoltage(double volts) {
-        appliedVolts = volts;
-        pivotSim.setInputVoltage(appliedVolts);
     }
 }

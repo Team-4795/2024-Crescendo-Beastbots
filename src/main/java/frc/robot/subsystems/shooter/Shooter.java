@@ -25,10 +25,11 @@ public class Shooter extends SubsystemBase {
         return instance;
     }
 
-    public static void init(ShooterIO io) {
+    public static Shooter init(ShooterIO io) {
         if (instance == null) {
             instance = new Shooter(io);
         }
+        return instance;
     }
 
     // 

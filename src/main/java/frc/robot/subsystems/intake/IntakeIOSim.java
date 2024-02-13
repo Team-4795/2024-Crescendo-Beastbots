@@ -27,6 +27,11 @@ public class IntakeIOSim implements IntakeIO {
         motor.setInputVoltage(IntakeConstants.defaultIntakeVoltage);
     }
 
+    @Override
+    public void updateInputs(IntakeIOInputs inputs) {
+        motor.update(0.02);
+    }
+
     
 
 }

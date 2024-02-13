@@ -13,12 +13,22 @@ public class IntakeIOReal implements IntakeIO {
     }
 
     @Override
+    public void stopIntake() {
+        coolintake.set(0.0);
+    }
+
+    @Override
     public void updateInputs(IntakeIOInputs inputs) {
         inputs.currentAmps = coolintake.getCurrent();
         inputs.position = coolintake.getRelativePosition();
         inputs.velocity = coolintake.getAbsoluteVelocity();
         inputs.voltage = coolintake.getVoltage();
        
+    }
+
+    @Override
+    public void setIntakeSpeedDefault() {
+        coolintake.set(IntakeConstants.defaultIntakeSpeed);
     }
     
     

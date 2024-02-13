@@ -10,6 +10,16 @@ public interface IntakeIO {
         public double velocity = 0.0;
         public double position = 0.0;
     }
-public default void updateInputs(IntakeIOInputs inputs) {}
-public default void setIntakeSpeed(double Speed) {}
+    public default void updateInputs(IntakeIOInputs inputs) {
+
+    }
+    public default void setIntakeSpeed(double Speed) {
+
+    }
+    public default void stopIntake() {
+
+    }
+    public default void setIntakeSpeedDefault () {
+        
+    }
 }

@@ -11,27 +11,23 @@ public class ShooterIOReal implements ShooterIO {
     private CANSpark leftShooterMotor = new CANSpark.Motor(Controller.MAX, ShooterConstants.leftCanID).configure();
     private CANSpark rightShooterMotor = new CANSpark.Motor(Controller.MAX, ShooterConstants.rightCanID).inverted(true).follows(leftShooterMotor).configure();
 
-    private SparkPIDController m_motor;
+    private SparkPIDController controller = leftShooterMotor.getMotor().getPIDController();
+
+    public ShooterIOReal() { 
+    }
 
     @Override
     public void setShooterVoltage(double volts) {
-        
-       leftShooterMotor.setVoltage(volts);
-
+      leftShooterMotor.setVoltage(volts);
     }
     @Override
     public void updateInputs(ShooterIOInputs inputs) {
-    
        inputs.voltage = leftShooterMotor.getVoltage();
        inputs.velocity = leftShooterMotor.getRelativeVelocity();
-
     }
     
     @Override
     public void setDesiredState(double speed) {
-      m_motor.setReference(speed, ControlType.kVelocity);
+      controller.setReference(speed, ControlType.kVelocity);
     }
-
-    
-
 }

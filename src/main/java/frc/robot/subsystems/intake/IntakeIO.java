@@ -22,4 +22,10 @@ public interface IntakeIO {
     public default void setIntakeSpeedDefault () {
         
     }
+    public default void setIntakeVoltage(double voltage) {
+
+    }
+    public default void setIntakeVoltageDefault() {
+
+    }
 }

@@ -2,6 +2,7 @@ package frc.robot.subsystems.pivot;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class PivotIOSim implements PivotIO {
@@ -19,6 +20,11 @@ public class PivotIOSim implements PivotIO {
             false,
             PivotConstants.initialAngle
         );
+    }
+
+    @Override
+    public void setPivotVoltage(double volts) {
+        pivotSim.setInput(volts);
     }
 
     @Override

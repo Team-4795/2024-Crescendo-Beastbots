@@ -1,8 +1,11 @@
 package frc.robot.subsystems.pivot;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Pivot extends SubsystemBase {
@@ -26,10 +29,11 @@ public class Pivot extends SubsystemBase {
        return instance;
     }
 
-    public static void init(PivotIO io) {
+    public static Pivot init(PivotIO io) {
         if(instance == null){
             instance = new Pivot(io);
         }
+        return instance;
     }
 
     public Pivot(PivotIO io) {
@@ -51,8 +55,10 @@ public class Pivot extends SubsystemBase {
 
     @Override
     public void periodic(){
+        io.updateInputs(inputs);
+        Logger.processInputs("Pivot", inputs);
         io.setPivotVoltage(
-            controller.calculate(inputs.angleRev, 0)
+            controller.calculate(inputs.angleRev, targetAngle)
         );
     }
 }

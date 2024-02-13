@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.pivot.Pivot;
 
 public class StateManager {
     private static StateManager mInstance;

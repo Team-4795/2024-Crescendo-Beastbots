@@ -102,7 +102,6 @@ public class RobotContainer {
             flywheel, flywheel::runVolts, flywheel::getCharacterizationVelocity));
     // Configure the button bindings
     configureButtonBindings();
-    StateManager.getInstance().setState(State.Intake);
   }
 
   /**

@@ -22,6 +22,11 @@ public class PivotIOSim implements PivotIO {
         );
     }
 
+    public void setPivotVoltage(double volts) {
+        appliedVolts = volts;
+        pivotSim.setInputVoltage(appliedVolts);
+    }
+
     @Override
     public void setPivotVoltage(double volts) {
         pivotSim.setInput(volts);

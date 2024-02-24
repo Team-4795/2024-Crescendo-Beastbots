@@ -179,7 +179,6 @@ public class CANSpark {
     public void resetEncoders(){
         relativeEncoder.setPosition(0);
     }
-
     public CANSparkBase getMotor() {
         return motor;
     }

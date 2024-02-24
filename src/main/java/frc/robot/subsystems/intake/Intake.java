@@ -27,8 +27,8 @@ public class Intake extends SubsystemBase {
         }
     }
 
-    public void setIntakeSpeed(double speeed){
-        coolintakespeed = speeed;
+    public void setIntakeSpeed(double speed){
+        coolintakespeed = speed;
     }
 
     @Override

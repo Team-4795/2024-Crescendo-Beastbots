@@ -11,9 +11,13 @@ public class ShooterIOReal implements ShooterIO {
     private CANSpark leftShooterMotor = new CANSpark.Motor(Controller.MAX, ShooterConstants.leftCanID).configure();
     private CANSpark rightShooterMotor = new CANSpark.Motor(Controller.MAX, ShooterConstants.rightCanID).inverted(true).follows(leftShooterMotor).configure();
 
+
     private SparkPIDController controller = leftShooterMotor.getMotor().getPIDController();
 
-    public ShooterIOReal() { 
+    public ShooterIOReal() {
+      controller.setD(ShooterConstants.kD);
+      controller.setI(ShooterConstants.kI);
+      controller.setP(ShooterConstants.kP);
     }
 
     @Override

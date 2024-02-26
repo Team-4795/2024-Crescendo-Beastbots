@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
 import frc.robot.util.CANSpark;
@@ -27,15 +28,14 @@ public class Intake extends SubsystemBase {
         }
     }
 
-    public void setIntakeSpeed(double speeed){
-        coolintakespeed = speeed;
+    public void setIntakeSpeed(double speed){
+        coolintakespeed = speed;
     }
 
     @Override
     public void periodic(){
-        // coolintake.set(coolintakespeed);
         io.updateInputs(inputs);
-        Logger.processInputs("coolintake", inputs);
+        Logger.processInputs("Intake", inputs);
         io.setIntakeSpeed(coolintakespeed);
     }
 }

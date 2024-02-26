@@ -24,10 +24,18 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
 import frc.robot.subsystems.drive.DriveIOSim;
 import frc.robot.subsystems.drive.DriveIOSparkMax;
-import frc.robot.subsystems.flywheel.Flywheel;
-import frc.robot.subsystems.flywheel.FlywheelIO;
-import frc.robot.subsystems.flywheel.FlywheelIOSim;
-import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIOReal;
+import frc.robot.subsystems.pivot.PivotIOSim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOReal;
+import frc.robot.subsystems.shooter.ShooterIOSim;
+
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
@@ -39,41 +47,35 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Flywheel flywheel;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
-  // Commands
+  // Auto
   private final AutoCommands autoCommands;
-
-  // Dashboard inputs
-  private final LoggedDashboardNumber flywheelSpeedInput =
-      new LoggedDashboardNumber("Flywheel Speed", 1500.0);
   private final AutoChooser autoChooser;
-
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations
         drive = new Drive(new DriveIOSparkMax());
-        flywheel = new Flywheel(new FlywheelIOSparkMax());
-        // drive = new Drive(new DriveIOTalonFX());
-        // flywheel = new Flywheel(new FlywheelIOTalonFX());
+        Pivot.init(new PivotIOReal());
+        Intake.init(new IntakeIOReal());
+        Shooter.init(new ShooterIOReal());
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         drive = new Drive(new DriveIOSim());
-        flywheel = new Flywheel(new FlywheelIOSim());
+        Pivot.init(new PivotIOSim());
+        Intake.init(new IntakeIOSim());
+        Shooter.init(new ShooterIOSim());
         break;
 
       default:
-        // Replayed robot, disable IO implementations
         drive = new Drive(new DriveIO() {});
-        flywheel = new Flywheel(new FlywheelIO() {});
+        Pivot.init(new PivotIOReal());
         break;
     }
 
@@ -81,7 +83,7 @@ public class RobotContainer {
     NamedCommandManager.register();
 
     // Set up auto commands.
-    autoCommands = new AutoCommands(drive, flywheel);
+    autoCommands = new AutoCommands();
     autoChooser = new AutoChooser(autoCommands);
 
     // Configure the button bindings
@@ -95,14 +97,29 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    drive.setDefaultCommand(
-        Commands.run(
-            () -> drive.driveArcade(-controller.getLeftY(), controller.getLeftX()), drive));
-    controller
-        .a()
-        .whileTrue(
-            Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
+    drive.setDefaultCommand(Commands.run(
+      () -> drive.driveArcade(-controller.getLeftY(), controller.getLeftX()), drive
+    ));  
+
+    controller.leftBumper().whileTrue(Commands.startEnd(
+      () -> Intake.getInstance().setIntakeSpeed(1), 
+      () -> Intake.getInstance().setIntakeSpeed(0)
+    ));
+
+    controller.rightBumper().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setSpeed(1),
+      () -> Shooter.getInstance().setSpeed(0)
+    ));
+
+    controller.leftTrigger().whileTrue(Commands.startEnd(
+      () -> Pivot.getInstance().setSpeed(-0.5), 
+      () -> Pivot.getInstance().setSpeed(0)
+    ));
+
+    controller.rightTrigger().whileTrue(Commands.startEnd(
+      () -> Pivot.getInstance().setSpeed(0.5), 
+      () -> Pivot.getInstance().setSpeed(0)
+    ));
   }
 
   /**

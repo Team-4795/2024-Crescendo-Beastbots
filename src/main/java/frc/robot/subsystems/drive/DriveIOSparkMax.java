@@ -17,6 +17,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -50,6 +51,11 @@ public class DriveIOSparkMax implements DriveIO {
     rightLeader.restoreFactoryDefaults();
     leftFollower.restoreFactoryDefaults();
     rightFollower.restoreFactoryDefaults();
+    
+    leftLeader.setIdleMode(IdleMode.kBrake);
+    rightLeader.setIdleMode(IdleMode.kBrake);
+    leftFollower.setIdleMode(IdleMode.kBrake);
+    rightFollower.setIdleMode(IdleMode.kBrake);
 
     leftLeader.setCANTimeout(250);
     rightLeader.setCANTimeout(250);

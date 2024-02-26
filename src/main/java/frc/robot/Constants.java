@@ -22,7 +22,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final Mode currentMode = Mode.REAL;
+  public static final Mode currentMode = Mode.SIM;
   public static final double DT = 0.02;
 
   public static enum Mode {
@@ -36,14 +36,10 @@ public final class Constants {
     REPLAY
   }
 
-  public record Setpoint(double intake, double shooter) {}
+  public record Setpoint(double intake, double shooter, double pivot) {}
 
   public static class StateConstants {
-    public static final Setpoint intake = new Setpoint(0, 0);
-    public static final Setpoint shooter = new Setpoint(0, 0);
+    public static final Setpoint intake = new Setpoint(0, 0, 1);
+    public static final Setpoint shooter = new Setpoint(0, 0, 0.5);
   }
-
-
-
-
 }

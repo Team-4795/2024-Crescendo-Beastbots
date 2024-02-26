@@ -16,8 +16,6 @@ public class AutoChooser {
         autoCommands = autoCommands_dep;
 
         autoChooser.addOption("Test Auto", autoCommands.testAuto());
-        autoChooser.addOption("Drive FF Characterization", autoCommands.driveFFCharacterization());
-        autoChooser.addOption("Flywheel FF Characterization", autoCommands.flywheelFFCharacterization());
     }
 
     public Command get() {

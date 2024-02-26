@@ -13,7 +13,7 @@ public class Shooter extends SubsystemBase {
     private ShooterIO io;
     private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-    private double requestedSpeed = 0.0;
+    private double speed = 0.0;
     private static Shooter instance;
 
     private Shooter(ShooterIO io){
@@ -25,15 +25,16 @@ public class Shooter extends SubsystemBase {
         return instance;
     }
 
-    public static void init(ShooterIO io) {
+    public static Shooter init(ShooterIO io) {
         if (instance == null) {
             instance = new Shooter(io);
         }
+        return instance;
     }
 
     // 
-    public void setRequestedSpeed(double requestedSpeed) {
-        this.requestedSpeed = requestedSpeed;
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
 
@@ -42,6 +43,6 @@ public class Shooter extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
         // Clamp clamps the voltage from 12,-12. 
-        io.setShooterVoltage(MathUtil.clamp(requestedSpeed * 12, -12, 12));
+        io.setShooterVoltage(MathUtil.clamp(speed * 12, -12, 12));
     }
 }

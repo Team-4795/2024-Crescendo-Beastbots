@@ -1,7 +1,9 @@
 package frc.robot.subsystems.pivot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class PivotIOSim implements PivotIO {
@@ -21,9 +23,14 @@ public class PivotIOSim implements PivotIO {
         );
     }
 
+    @Override
     public void setPivotVoltage(double volts) {
-        appliedVolts = volts;
-        pivotSim.setInputVoltage(appliedVolts);
+        pivotSim.setInput(volts);
+    }
+
+    @Override
+    public void setSpeed(double speed){
+        pivotSim.setInputVoltage(MathUtil.clamp(12 * speed, -12, 12));
     }
 
     @Override

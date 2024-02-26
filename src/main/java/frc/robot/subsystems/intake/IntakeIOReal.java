@@ -32,13 +32,12 @@ public class IntakeIOReal implements IntakeIO {
         inputs.position = coolintake.getRelativePosition();
         inputs.velocity = coolintake.getAbsoluteVelocity();
         inputs.voltage = coolintake.getVoltage();
-       
+
     }
 
     @Override
     public void setIntakeSpeedDefault() {
         coolintake.set(IntakeConstants.defaultIntakeSpeed);
     }
-    
-    
+
 }

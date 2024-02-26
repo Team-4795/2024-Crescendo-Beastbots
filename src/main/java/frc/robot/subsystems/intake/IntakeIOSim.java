@@ -19,7 +19,7 @@ public class IntakeIOSim implements IntakeIO {
     }
 
     @Override
-    public void setIntakeSpeed(double speed){
+    public void setIntakeSpeed(double speed) {
         motor.setInputVoltage(MathUtil.clamp(12 * speed, -12, 12));
     }
 
@@ -42,4 +42,4 @@ public class IntakeIOSim implements IntakeIO {
         inputs.voltage = voltage;
     }
 }
-//setinputvoltage
+// setinputvoltage

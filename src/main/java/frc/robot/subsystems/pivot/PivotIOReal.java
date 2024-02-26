@@ -1,6 +1,5 @@
 package frc.robot.subsystems.pivot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.CANSpark;
 import frc.robot.util.CANSpark.Controller;
 

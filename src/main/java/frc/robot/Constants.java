@@ -30,13 +30,14 @@ public final class Constants {
     REPLAY
   }
 
-  public record Setpoint(double intake, double shooter, double pivot) {}
+  public record Setpoint(double intake, double shooter, double pivot) {
+  }
 
   public static class StateConstants {
     public static final Setpoint intake = new Setpoint(0, 0, 1);
     public static final Setpoint shooter = new Setpoint(0, 0, 0.5);
   }
-  
+
   public static class OI {
     public static final CommandXboxController driveController = new CommandXboxController(0);
     public static final CommandXboxController opController = new CommandXboxController(1);

@@ -10,8 +10,14 @@ public interface ShooterIO {
         public double velocity = 0.0;
 
     }
-// 
-    public default void updateInputs(ShooterIOInputs inputs) {}
-    public default void setDesiredState(double speed) {}
-    public default void setShooterVoltage(double volts) {}
+
+    //
+    public default void updateInputs(ShooterIOInputs inputs) {
+    }
+
+    public default void setDesiredState(double speed) {
+    }
+
+    public default void setShooterVoltage(double volts) {
+    }
 }

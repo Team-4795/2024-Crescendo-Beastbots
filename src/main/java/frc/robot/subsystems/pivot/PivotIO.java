@@ -11,7 +11,12 @@ public interface PivotIO {
         public double currentOutput = 0.0;
     }
 
-    public default void updateInputs(PivotIOInputs inputs) {}
-    public default void setPivotVoltage(double volts) {}
-    public default void setSpeed(double speed) {}
+    public default void updateInputs(PivotIOInputs inputs) {
+    }
+
+    public default void setPivotVoltage(double volts) {
+    }
+
+    public default void setSpeed(double speed) {
+    }
 }

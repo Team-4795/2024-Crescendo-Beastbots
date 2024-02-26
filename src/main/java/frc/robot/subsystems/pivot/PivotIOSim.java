@@ -3,7 +3,6 @@ package frc.robot.subsystems.pivot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class PivotIOSim implements PivotIO {
@@ -12,15 +11,14 @@ public class PivotIOSim implements PivotIO {
 
     public PivotIOSim() {
         pivotSim = new SingleJointedArmSim(
-            DCMotor.getNEO(1), 
-            PivotConstants.gearing, 
-            PivotConstants.MOI, 
-            PivotConstants.armLength,
-            PivotConstants.minAngle,
-            PivotConstants.maxAngle, 
-            false,
-            PivotConstants.initialAngle
-        );
+                DCMotor.getNEO(1),
+                PivotConstants.gearing,
+                PivotConstants.MOI,
+                PivotConstants.armLength,
+                PivotConstants.minAngle,
+                PivotConstants.maxAngle,
+                false,
+                PivotConstants.initialAngle);
     }
 
     @Override
@@ -29,7 +27,7 @@ public class PivotIOSim implements PivotIO {
     }
 
     @Override
-    public void setSpeed(double speed){
+    public void setSpeed(double speed) {
         pivotSim.setInputVoltage(MathUtil.clamp(12 * speed, -12, 12));
     }
 

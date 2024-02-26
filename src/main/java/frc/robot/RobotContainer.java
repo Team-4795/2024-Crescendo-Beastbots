@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.OI;
 import frc.robot.commands.AutoCommands;
 import frc.robot.commands.NamedCommandManager;
 import frc.robot.subsystems.drive.Drive;
@@ -34,10 +34,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -47,9 +43,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
 
   // Auto
   private final AutoCommands autoCommands;
@@ -98,25 +91,25 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     drive.setDefaultCommand(Commands.run(
-      () -> drive.driveArcade(-controller.getLeftY(), controller.getLeftX()), drive
+      () -> drive.driveArcade(-OI.driveController.getLeftY(), OI.driveController.getLeftX()), drive
     ));  
 
-    controller.leftBumper().whileTrue(Commands.startEnd(
+    OI.opController.leftBumper().whileTrue(Commands.startEnd(
       () -> Intake.getInstance().setIntakeSpeed(1), 
       () -> Intake.getInstance().setIntakeSpeed(0)
     ));
 
-    controller.rightBumper().whileTrue(Commands.startEnd(
+    OI.opController.rightBumper().whileTrue(Commands.startEnd(
       () -> Shooter.getInstance().setSpeed(1),
       () -> Shooter.getInstance().setSpeed(0)
     ));
 
-    controller.leftTrigger().whileTrue(Commands.startEnd(
+    OI.opController.leftTrigger().whileTrue(Commands.startEnd(
       () -> Pivot.getInstance().setSpeed(-0.5), 
       () -> Pivot.getInstance().setSpeed(0)
     ));
 
-    controller.rightTrigger().whileTrue(Commands.startEnd(
+    OI.opController.rightTrigger().whileTrue(Commands.startEnd(
       () -> Pivot.getInstance().setSpeed(0.5), 
       () -> Pivot.getInstance().setSpeed(0)
     ));

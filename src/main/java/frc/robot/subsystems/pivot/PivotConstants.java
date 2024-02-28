@@ -4,7 +4,7 @@ package frc.robot.subsystems.pivot;
 public class PivotConstants {
     public static final double LowSetpointLimit = 0;
     public static final double HighSetpointLimit = Math.PI * 2;
-    public static final int CANID = 11;
+    public static final int CANID = 5;
     public static final double kP = 2;
     public static final double kI = 0;
     public static final double kD = 0;

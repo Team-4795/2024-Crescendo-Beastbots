@@ -13,17 +13,17 @@
 
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * NOTE: To use the Spark Flex / NEO Vortex, replace all instances of "CANSparkMax" with
@@ -43,8 +43,7 @@ public class DriveIOSparkMax implements DriveIO {
   private final SparkPIDController leftPID = leftLeader.getPIDController();
   private final SparkPIDController rightPID = rightLeader.getPIDController();
 
-  private final Pigeon2 pigeon = new Pigeon2(20);
-  private final StatusSignal<Double> yaw = pigeon.getYaw();
+  private final AHRS imu = new AHRS(SPI.Port.kMXP);
 
   public DriveIOSparkMax() {
     leftLeader.restoreFactoryDefaults();
@@ -82,10 +81,6 @@ public class DriveIOSparkMax implements DriveIO {
     leftFollower.burnFlash();
     rightFollower.burnFlash();
 
-    pigeon.getConfigurator().apply(new Pigeon2Configuration());
-    pigeon.getConfigurator().setYaw(0.0);
-    yaw.setUpdateFrequency(100.0);
-    pigeon.optimizeBusUtilization();
   }
 
   @Override
@@ -104,7 +99,7 @@ public class DriveIOSparkMax implements DriveIO {
     inputs.leftCurrentAmps =
         new double[] {rightLeader.getOutputCurrent(), rightFollower.getOutputCurrent()};
 
-    inputs.gyroYaw = Rotation2d.fromDegrees(yaw.refresh().getValueAsDouble());
+    inputs.gyroYaw = Rotation2d.fromDegrees(imu.getYaw());
   }
 
   @Override

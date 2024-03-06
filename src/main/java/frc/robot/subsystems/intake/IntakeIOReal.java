@@ -1,43 +1,26 @@
 package frc.robot.subsystems.intake;
 
-import com.revrobotics.SparkPIDController;
-
-import frc.robot.util.CANSpark;
-import frc.robot.util.CANSpark.Controller;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 
 public class IntakeIOReal implements IntakeIO {
-    private CANSpark coolintake = new CANSpark.Motor(Controller.MAX, IntakeConstants.canID).configure();
-    private SparkPIDController controller = coolintake.getMotor().getPIDController();
+    private CANSparkMax motor = new CANSparkMax(IntakeConstants.canID, MotorType.kBrushless);
 
     public IntakeIOReal() {
-        controller.setP(IntakeConstants.kP);
-        controller.setI(IntakeConstants.kI);
-        controller.setD(IntakeConstants.kD);
-
+        motor.setSmartCurrentLimit(IntakeConstants.currentLimit);
+        motor.burnFlash();
     }
 
     @Override
-    public void setIntakeSpeed(double speed) {
-        coolintake.set(speed);
-    }
-
-    @Override
-    public void stopIntake() {
-        coolintake.set(0.0);
+    public void setIntakeVoltage(double voltage) {
+        motor.set(voltage);
     }
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
-        inputs.currentAmps = coolintake.getCurrent();
-        inputs.position = coolintake.getRelativePosition();
-        inputs.velocity = coolintake.getAbsoluteVelocity();
-        inputs.voltage = coolintake.getVoltage();
-
-    }
-
-    @Override
-    public void setIntakeSpeedDefault() {
-        coolintake.set(IntakeConstants.defaultIntakeSpeed);
+        inputs.currentAmps = motor.getOutputCurrent();
+        inputs.velocity = motor.getEncoder().getVelocity();
+        inputs.voltage = motor.getBusVoltage();
     }
 
 }

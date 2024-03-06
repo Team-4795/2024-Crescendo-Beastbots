@@ -18,7 +18,7 @@ public class StateManager {
 
     public void setSetpoints() {
         Shooter.getInstance().setVelocity(this.state.setpoint.shooter());
-        Intake.getInstance().setIntakeSpeed(this.state.setpoint.intake());
+        Intake.getInstance().setVelocity(this.state.setpoint.intake());
         Pivot.getInstance().setTargetAngle(this.state.setpoint.pivot());
     }
 

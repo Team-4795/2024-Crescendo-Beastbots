@@ -2,11 +2,12 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
-    private double speed = 0.0;
+    private double velocity = 0.0;
     private IntakeIO io;
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
     private static Intake instance;
@@ -25,14 +26,26 @@ public class Intake extends SubsystemBase {
         }
     }
 
-    public void setIntakeSpeed(double speed) {
-        this.speed = speed;
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
+    }
+
+    public double getCurrent(){
+        return inputs.currentAmps;
+    }
+
+    public double getVelocity(){
+        return inputs.velocity;
+    }
+
+    public double getVoltage(){
+        return inputs.voltage;
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);
-        io.setIntakeSpeed(speed);
+        io.setIntakeVoltage(MathUtil.clamp(velocity * 12, -12, 12));
     }
 }

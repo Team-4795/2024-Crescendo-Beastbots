@@ -95,8 +95,8 @@ public class RobotContainer {
     ));  
 
     OI.opController.leftBumper().whileTrue(Commands.startEnd(
-      () -> Intake.getInstance().setIntakeSpeed(1), 
-      () -> Intake.getInstance().setIntakeSpeed(0)
+      () -> Intake.getInstance().setVelocity(1), 
+      () -> Intake.getInstance().setVelocity(0)
     ));
 
     OI.opController.rightBumper().whileTrue(Commands.startEnd(

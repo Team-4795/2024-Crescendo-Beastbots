@@ -1,6 +1,5 @@
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
@@ -19,26 +18,10 @@ public class IntakeIOSim implements IntakeIO {
     }
 
     @Override
-    public void setIntakeSpeed(double speed) {
-        motor.setInputVoltage(MathUtil.clamp(12 * speed, -12, 12));
-    }
-
-    @Override
-    public void stopIntake() {
-        motor.setInputVoltage(0);
-    }
-
-    @Override
-    public void setIntakeVoltageDefault() {
-        motor.setInputVoltage(IntakeConstants.defaultIntakeVoltage);
-    }
-
-    @Override
     public void updateInputs(IntakeIOInputs inputs) {
         motor.update(0.02);
         inputs.currentAmps = motor.getCurrentDrawAmps();
-        inputs.position = motor.getAngularPositionRad();
-        inputs.velocity = motor.getAngularVelocityRadPerSec();
+        inputs.velocity = motor.getAngularVelocityRPM();
         inputs.voltage = voltage;
     }
 }

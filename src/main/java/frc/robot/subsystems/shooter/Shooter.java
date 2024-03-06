@@ -11,7 +11,7 @@ public class Shooter extends SubsystemBase {
     private ShooterIO io;
     private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-    private double speed = 0.0;
+    private double velocity = 0.0;
     private static Shooter instance;
 
     private Shooter(ShooterIO io) {
@@ -30,9 +30,20 @@ public class Shooter extends SubsystemBase {
         return instance;
     }
 
-    //
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public void setVelocity(double v) {
+        this.velocity = v;
+    }
+
+    public double getVelocity() {
+        return inputs.velocity;
+    }
+    
+    public double getCurrent() {
+        return inputs.current;
+    }
+
+    public double getVoltage() {
+        return inputs.voltage;
     }
 
     @Override
@@ -40,6 +51,6 @@ public class Shooter extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
         // Clamp clamps the voltage from 12,-12.
-        io.setShooterVoltage(MathUtil.clamp(speed * 12, -12, 12));
+        io.setShooterVoltage(MathUtil.clamp(velocity * 12, -12, 12));
     }
 }

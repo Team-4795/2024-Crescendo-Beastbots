@@ -100,8 +100,8 @@ public class RobotContainer {
     ));
 
     OI.opController.rightBumper().whileTrue(Commands.startEnd(
-      () -> Shooter.getInstance().setSpeed(1),
-      () -> Shooter.getInstance().setSpeed(0)
+      () -> Shooter.getInstance().setVelocity(1),
+      () -> Shooter.getInstance().setVelocity(0)
     ));
 
     OI.opController.leftTrigger().whileTrue(Commands.startEnd(

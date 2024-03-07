@@ -105,13 +105,13 @@ public class RobotContainer {
     ));
 
     OI.opController.leftTrigger().whileTrue(Commands.startEnd(
-      () -> Pivot.getInstance().setSpeed(-0.5), 
-      () -> Pivot.getInstance().setSpeed(0)
+      () -> Pivot.getInstance().setVelocity(-0.5), 
+      () -> Pivot.getInstance().setVelocity(0)
     ));
 
     OI.opController.rightTrigger().whileTrue(Commands.startEnd(
-      () -> Pivot.getInstance().setSpeed(0.5), 
-      () -> Pivot.getInstance().setSpeed(0)
+      () -> Pivot.getInstance().setVelocity(0.5), 
+      () -> Pivot.getInstance().setVelocity(0)
     ));
   }
 

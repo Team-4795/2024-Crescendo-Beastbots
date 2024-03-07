@@ -17,8 +17,7 @@ public class Pivot extends SubsystemBase {
             new TrapezoidProfile.Constraints(
                     PivotConstants.maxV,
                     PivotConstants.maxA));
-    private double targetAngle = 0.0;
-    private double speed;
+    private double velocity = 0.0;
     private static Pivot instance;
 
     private Pivot(PivotIO io) {
@@ -33,25 +32,28 @@ public class Pivot extends SubsystemBase {
         return instance;
     }
 
-    public void setTargetAngle(double targetAngle) {
-        this.targetAngle = MathUtil.clamp(targetAngle, PivotConstants.LowSetpointLimit,
-                PivotConstants.HighSetpointLimit);
+    public static Pivot getInstance() {
+        return instance;
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public void setVelocity(double v) {
+        this.velocity = v;
     }
 
     public double getPosition() {
-        return inputs.angleRev;
+        return inputs.angleRad;
     }
 
-    public double getTargetAngle() {
-        return targetAngle;
+    public double getVelocity() {
+        return inputs.angleRadPerSec;
     }
 
-    public static Pivot getInstance() {
-        return instance;
+    public double getVoltage() {
+        return inputs.appliedVolts;
+    }
+
+    public double getCurrent() {
+        return inputs.currentOutput;
     }
 
     @Override
@@ -61,6 +63,6 @@ public class Pivot extends SubsystemBase {
         // io.setSpeed(
         // controller.calculate(inputs.angleRev, targetAngle)
         // );
-        io.setSpeed(speed);
+        io.setPivotVoltage(MathUtil.clamp(velocity * 12, -12, 12));
     }
 }

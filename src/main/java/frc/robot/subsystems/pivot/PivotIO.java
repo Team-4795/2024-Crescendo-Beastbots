@@ -5,8 +5,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface PivotIO {
     @AutoLog
     public static class PivotIOInputs {
-        public double angleRev = 0.0;
-        public double angleRevPerSec = 0.0;
+        public double angleRad = 0.0;
+        public double angleRadPerSec = 0.0;
         public double appliedVolts = 0.0;
         public double currentOutput = 0.0;
     }

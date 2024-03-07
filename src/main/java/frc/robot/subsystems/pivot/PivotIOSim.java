@@ -34,8 +34,8 @@ public class PivotIOSim implements PivotIO {
     @Override
     public void updateInputs(PivotIOInputs inputs) {
         pivotSim.update(Constants.DT);
-        inputs.angleRev = pivotSim.getAngleRads() / (2 * Math.PI);
-        inputs.angleRevPerSec = pivotSim.getVelocityRadPerSec() / (2 * Math.PI);
+        inputs.angleRad = pivotSim.getAngleRads();
+        inputs.angleRadPerSec = pivotSim.getVelocityRadPerSec();
         inputs.appliedVolts = appliedVolts;
         inputs.currentOutput = pivotSim.getCurrentDrawAmps();
     }

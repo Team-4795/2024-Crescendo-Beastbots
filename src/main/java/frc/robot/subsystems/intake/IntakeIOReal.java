@@ -19,7 +19,7 @@ public class IntakeIOReal implements IntakeIO {
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
         inputs.currentAmps = motor.getOutputCurrent();
-        inputs.velocity = motor.getEncoder().getVelocity();
+        inputs.velocityRPM = motor.getEncoder().getVelocity();
         inputs.voltage = motor.getBusVoltage();
     }
 

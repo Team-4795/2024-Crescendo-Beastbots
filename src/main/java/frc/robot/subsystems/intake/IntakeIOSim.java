@@ -21,7 +21,7 @@ public class IntakeIOSim implements IntakeIO {
     public void updateInputs(IntakeIOInputs inputs) {
         motor.update(0.02);
         inputs.currentAmps = motor.getCurrentDrawAmps();
-        inputs.velocity = motor.getAngularVelocityRPM();
+        inputs.velocityRPM = motor.getAngularVelocityRPM();
         inputs.voltage = voltage;
     }
 }

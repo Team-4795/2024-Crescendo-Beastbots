@@ -33,7 +33,7 @@ public class ShooterIOReal implements ShooterIO {
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.voltage = leftShooterMotor.getBusVoltage();
-    inputs.velocity = leftShooterMotor.getEncoder().getVelocity();
+    inputs.velocityRPM = leftShooterMotor.getEncoder().getVelocity();
     inputs.current = leftShooterMotor.getOutputCurrent();
   }
 

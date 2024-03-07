@@ -35,7 +35,7 @@ public class Intake extends SubsystemBase {
     }
 
     public double getVelocity(){
-        return inputs.velocity;
+        return inputs.velocityRPM;
     }
 
     public double getVoltage(){

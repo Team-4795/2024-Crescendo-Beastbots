@@ -35,7 +35,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return inputs.velocity;
+        return inputs.velocityRPM;
     }
     
     public double getCurrent() {

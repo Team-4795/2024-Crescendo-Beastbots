@@ -51,10 +51,10 @@ public class DriveIOSparkMax implements DriveIO {
     leftFollower.restoreFactoryDefaults();
     rightFollower.restoreFactoryDefaults();
     
-    leftLeader.setIdleMode(IdleMode.kBrake);
-    rightLeader.setIdleMode(IdleMode.kBrake);
-    leftFollower.setIdleMode(IdleMode.kBrake);
-    rightFollower.setIdleMode(IdleMode.kBrake);
+    leftLeader.setIdleMode(IdleMode.kCoast);
+    rightLeader.setIdleMode(IdleMode.kCoast);
+    leftFollower.setIdleMode(IdleMode.kCoast);
+    rightFollower.setIdleMode(IdleMode.kCoast);
 
     leftLeader.setCANTimeout(250);
     rightLeader.setCANTimeout(250);

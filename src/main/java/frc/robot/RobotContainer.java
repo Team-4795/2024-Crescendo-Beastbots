@@ -91,7 +91,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     drive.setDefaultCommand(Commands.run(
-      () -> drive.driveArcade(-OI.driveController.getLeftY(), OI.driveController.getLeftX()), drive
+      () -> drive.driveArcade(-OI.driveController.getRightY(), OI.driveController.getLeftX()), drive
     ));  
 
     OI.opController.leftBumper().whileTrue(Commands.startEnd(
@@ -112,6 +112,16 @@ public class RobotContainer {
     OI.opController.rightTrigger().whileTrue(Commands.startEnd(
       () -> Pivot.getInstance().setVelocity(0.5), 
       () -> Pivot.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.b().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setVelocity(-1), 
+      () -> Shooter.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.povDown().whileTrue(Commands.startEnd(
+      () -> Intake.getInstance().setVelocity(-1), 
+      () -> Intake.getInstance().setVelocity(0)
     ));
   }
 

@@ -16,5 +16,5 @@ public class PivotConstants {
     public static final double minAngle = 0;
     public static final double maxAngle = Math.PI;
     public static final double initialAngle = 0;
-    public static final int currentLimit = 40;
+    public static final int currentLimit = 60;
 }

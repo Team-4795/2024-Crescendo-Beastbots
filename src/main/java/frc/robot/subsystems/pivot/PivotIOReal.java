@@ -19,6 +19,11 @@ public class PivotIOReal implements PivotIO {
    }
 
    @Override
+   public void setPivotVoltage(double voltage) {
+      pivotMotor.setVoltage(voltage);
+   }
+
+   @Override
    public void updateInputs(PivotIOInputs inputs) {
       inputs.appliedVolts = pivotMotor.getBusVoltage();
       inputs.angleRadPerSec = pivotMotor.getEncoder().getVelocity();

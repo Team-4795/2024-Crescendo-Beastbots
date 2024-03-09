@@ -25,8 +25,8 @@ public class PivotIOReal implements PivotIO {
 
    @Override
    public void updateInputs(PivotIOInputs inputs) {
-      inputs.appliedVolts = pivotMotor.getBusVoltage();
-      inputs.angleRadPerSec = pivotMotor.getEncoder().getVelocity();
+      inputs.appliedVolts = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
+      inputs.velocityRadPerSec = pivotMotor.getEncoder().getVelocity();
       inputs.currentOutput = pivotMotor.getOutputCurrent();
       inputs.angleRad = pivotMotor.getEncoder().getPosition();
    }

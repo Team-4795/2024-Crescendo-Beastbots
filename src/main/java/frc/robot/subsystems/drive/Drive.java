@@ -13,10 +13,14 @@
 
 package frc.robot.subsystems.drive;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,8 +35,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.util.LocalADStarAK;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   public static final double WHEEL_RADIUS = Units.inchesToMeters(3.0);
@@ -50,6 +52,8 @@ public class Drive extends SubsystemBase {
   private final DifferentialDriveKinematics kinematics =
       new DifferentialDriveKinematics(TRACK_WIDTH);
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
+
+  private double voltageLimit = 12;
 
   /** Creates a new Drive. */
   public Drive(DriveIO io) {
@@ -113,7 +117,11 @@ public class Drive extends SubsystemBase {
   /** Run open loop based on stick positions. */
   public void driveArcade(double xSpeed, double zRotation) {
     var speeds = DifferentialDrive.arcadeDriveIK(xSpeed, zRotation, true);
-    io.setVoltage(speeds.left * 12.0, speeds.right * 12.0);
+    io.setVoltage(speeds.left * voltageLimit, speeds.right * voltageLimit);
+  }
+
+  public void setVoltageLimit(double limit) {
+    this.voltageLimit = limit;
   }
 
   /** Stops the drive. */

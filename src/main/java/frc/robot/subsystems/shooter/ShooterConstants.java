@@ -7,5 +7,5 @@ public final class ShooterConstants {
     public static final double kP = 1;
     public static final double kI = 1;
     public static final double kD = 1;
-    public static final int currentLimit = 40;
+    public static final int currentLimit = 60;
 }

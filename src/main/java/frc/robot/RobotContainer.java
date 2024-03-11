@@ -76,7 +76,7 @@ public class RobotContainer {
     NamedCommandManager.register();
 
     // Set up auto commands.
-    autoCommands = new AutoCommands();
+    autoCommands = new AutoCommands(drive);
     autoChooser = new AutoChooser(autoCommands);
 
     // Configure the button bindings
@@ -125,7 +125,7 @@ public class RobotContainer {
     ));
 
     OI.driveController.leftBumper().whileTrue(Commands.startEnd(
-      () -> drive.setVoltageLimit(6), 
+      () -> drive.setVoltageLimit(Constants.slowModeVoltageLimit), 
       () -> drive.setVoltageLimit(12)
     ));
   }

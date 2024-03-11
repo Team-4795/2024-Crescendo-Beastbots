@@ -14,8 +14,8 @@ public class AutoChooser {
     public AutoChooser(AutoCommands autoCommands_dep) {
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         autoCommands = autoCommands_dep;
-
-        autoChooser.addOption("Test Auto", autoCommands.testAuto());
+        autoChooser.addDefaultOption("One Note", autoCommands.oneNote());
+        autoChooser.addOption("One Note", autoCommands.oneNote());
     }
 
     public Command get() {

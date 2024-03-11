@@ -30,6 +30,8 @@ public final class Constants {
     REPLAY
   }
 
+  public static double slowModeVoltageLimit = 3;
+
   public record Setpoint(double intake, double shooter, double pivot) {
   }
 

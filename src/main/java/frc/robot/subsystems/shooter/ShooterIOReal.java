@@ -16,6 +16,8 @@ public class ShooterIOReal implements ShooterIO {
     rightShooterMotor.setInverted(true);
     rightShooterMotor.setSmartCurrentLimit(ShooterConstants.currentLimit);
     leftShooterMotor.setSmartCurrentLimit(ShooterConstants.currentLimit);
+    leftShooterMotor.enableVoltageCompensation(12);
+    rightShooterMotor.enableVoltageCompensation(12);
 
     controller.setD(ShooterConstants.kD);
     controller.setI(ShooterConstants.kI);

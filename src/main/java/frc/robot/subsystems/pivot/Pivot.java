@@ -45,7 +45,7 @@ public class Pivot extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return inputs.angleRadPerSec;
+        return inputs.velocityRadPerSec;
     }
 
     public double getVoltage() {

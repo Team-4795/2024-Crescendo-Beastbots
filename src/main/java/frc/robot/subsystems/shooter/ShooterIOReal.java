@@ -16,6 +16,8 @@ public class ShooterIOReal implements ShooterIO {
     rightShooterMotor.setInverted(true);
     rightShooterMotor.setSmartCurrentLimit(ShooterConstants.currentLimit);
     leftShooterMotor.setSmartCurrentLimit(ShooterConstants.currentLimit);
+    leftShooterMotor.enableVoltageCompensation(12);
+    rightShooterMotor.enableVoltageCompensation(12);
 
     controller.setD(ShooterConstants.kD);
     controller.setI(ShooterConstants.kI);
@@ -32,7 +34,7 @@ public class ShooterIOReal implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.voltage = leftShooterMotor.getBusVoltage();
+    inputs.voltage = leftShooterMotor.getBusVoltage() * leftShooterMotor.getAppliedOutput();
     inputs.velocityRPM = leftShooterMotor.getEncoder().getVelocity();
     inputs.current = leftShooterMotor.getOutputCurrent();
   }

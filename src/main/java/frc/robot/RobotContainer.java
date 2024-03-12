@@ -76,7 +76,7 @@ public class RobotContainer {
     NamedCommandManager.register();
 
     // Set up auto commands.
-    autoCommands = new AutoCommands();
+    autoCommands = new AutoCommands(drive);
     autoChooser = new AutoChooser(autoCommands);
 
     // Configure the button bindings
@@ -91,7 +91,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     drive.setDefaultCommand(Commands.run(
-      () -> drive.driveArcade(-OI.driveController.getRightY(), OI.driveController.getLeftX()), drive
+      () -> drive.driveArcade(OI.driveController.getRightY(), OI.driveController.getLeftX()), drive
     ));  
 
     OI.opController.leftBumper().whileTrue(Commands.startEnd(
@@ -122,6 +122,11 @@ public class RobotContainer {
     OI.opController.povDown().whileTrue(Commands.startEnd(
       () -> Intake.getInstance().setVelocity(-1), 
       () -> Intake.getInstance().setVelocity(0)
+    ));
+
+    OI.driveController.leftBumper().whileTrue(Commands.startEnd(
+      () -> drive.setVoltageLimit(Constants.slowModeVoltageLimit), 
+      () -> drive.setVoltageLimit(12)
     ));
   }
 

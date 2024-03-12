@@ -15,7 +15,7 @@ public class StateManager {
         this.state = state;
         setSetpoints();
     }
-
+    
     public void setSetpoints() {
         Shooter.getInstance().setVelocity(this.state.setpoint.shooter());
         Intake.getInstance().setVelocity(this.state.setpoint.intake());

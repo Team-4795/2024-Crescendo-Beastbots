@@ -38,8 +38,11 @@ public class Vision extends SubsystemBase {
         return inputs.area;
     }
 
-    public PoseEstimate getVisionpose(){
-        return inputs.limelightMeasurement;
+    public Pose2d getVisionPose(){
+        return inputs.limelightMeasurement.pose;
+    }
+    public double getVisionTimestamp(){
+        return inputs.limelightMeasurement.timestampSeconds;
     }
 
     @Override

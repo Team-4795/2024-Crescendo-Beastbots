@@ -109,6 +109,11 @@ public class DriveIOSparkMax implements DriveIO {
   }
 
   @Override
+  public void zeroHeading() {
+    imu.reset();
+  }
+
+  @Override
   public void setVelocity(
       double leftRadPerSec, double rightRadPerSec, double leftFFVolts, double rightFFVolts) {
     leftPID.setReference(

@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 2.0,
-      "y": 7.0
-    },
-    "rotation": -25.0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -14,13 +8,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Run Flywheel"
+            "name": "ZeroHeading"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "go to 1st ring, intake and shoot"
+            "pathName": "testpath"
           }
         }
       ]

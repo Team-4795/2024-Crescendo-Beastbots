@@ -168,4 +168,8 @@ public class Drive extends SubsystemBase {
   public double getCharacterizationVelocity() {
     return (inputs.leftVelocityRadPerSec + inputs.rightVelocityRadPerSec) / 2.0;
   }
+
+  public void zeroHeading() {
+    io.zeroHeading();
+  }
 }

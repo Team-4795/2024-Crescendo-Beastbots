@@ -73,7 +73,8 @@ public class RobotContainer {
     }
 
     // Register named commands
-    NamedCommandManager.register();
+
+    (new NamedCommandManager(drive)).register();
 
     // Set up auto commands.
     autoCommands = new AutoCommands(drive);
@@ -127,6 +128,11 @@ public class RobotContainer {
     OI.driveController.leftBumper().whileTrue(Commands.startEnd(
       () -> drive.setVoltageLimit(Constants.slowModeVoltageLimit), 
       () -> drive.setVoltageLimit(12)
+    ));
+
+    OI.opController.a().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setVelocity(0.5),
+      () -> Shooter.getInstance().setVelocity(0)
     ));
   }
 

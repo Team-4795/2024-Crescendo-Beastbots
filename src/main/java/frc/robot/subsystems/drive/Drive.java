@@ -21,20 +21,30 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import Jama.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.LimelightHelpers.LimelightResults;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   public static final double WHEEL_RADIUS = Units.inchesToMeters(3.0);
@@ -47,12 +57,13 @@ public class Drive extends SubsystemBase {
 
   private final DriveIO io;
   private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
-  private final DifferentialDriveOdometry odometry =
-      new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0);
   private final DifferentialDriveKinematics kinematics =
       new DifferentialDriveKinematics(TRACK_WIDTH);
+  private final DifferentialDrivePoseEstimator m_PoseEstimator =
+      new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
 
+  private final Vision Vision = new Vision("Limelight");
   private double voltageLimit = 12;
 
   /** Creates a new Drive. */
@@ -93,7 +104,10 @@ public class Drive extends SubsystemBase {
     Logger.processInputs("Drive", inputs);
 
     // Update odometry
-    odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
+    m_PoseEstimator.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
+
+    // Update vision
+    m_PoseEstimator.addVisionMeasurement(Vision.getVisionPose(), Vision.getVisionTimestamp());
   }
 
   /** Run open loop at the specified voltage. */
@@ -132,12 +146,12 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry pose in meters. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return m_PoseEstimator.getEstimatedPosition();
   }
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose);
+    m_PoseEstimator.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose);
   }
 
   /** Returns the position of the left wheels in meters. */

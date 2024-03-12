@@ -4,11 +4,13 @@ import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.Limelight;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.LimelightHelpers;
+import frc.robot.util.LimelightHelpers.PoseEstimate;
 
 public class Vision extends SubsystemBase {
-    private PIDController controller = new PIDController(0, 0, 0);
     private VisionIOInputsAutoLogged inputs = new VisionIOInputsAutoLogged();
     private String name;
 
@@ -17,6 +19,7 @@ public class Vision extends SubsystemBase {
         public double yawDeg = 0.0;
         public double pitchDeg = 0.0;
         public double area = 0.0;
+        public LimelightHelpers.PoseEstimate limelightMeasurement;
     }
 
     public Vision(String name) {
@@ -35,11 +38,19 @@ public class Vision extends SubsystemBase {
         return inputs.area;
     }
 
+    public PoseEstimate getVisionpose(){
+        return inputs.limelightMeasurement;
+    }
+
     @Override
     public void periodic() {
-        inputs.area = Limelight.getTA(name);
-        inputs.pitchDeg = Limelight.getTY(name);
-        inputs.yawDeg = Limelight.getTX(name);
+        inputs.area = LimelightHelpers.getTA(name);
+        inputs.pitchDeg = LimelightHelpers.getTY(name);
+        inputs.yawDeg = LimelightHelpers.getTX(name);
+
+        inputs.limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+
         Logger.processInputs("Vision", inputs);
+        Logger.recordOutput("Vision/Yaw Degrees", inputs.yawDeg);
     }
 }

@@ -26,7 +26,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class Limelight {
+public class LimelightHelpers {
 
     public static class LimelightTarget_Retro {
 
@@ -757,7 +757,7 @@ public class Limelight {
     public static LimelightResults getLatestResults(String limelightName) {
 
         long start = System.nanoTime();
-        Limelight.LimelightResults results = new Limelight.LimelightResults();
+        LimelightHelpers.LimelightResults results = new LimelightHelpers.LimelightResults();
         if (mapper == null) {
             mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }

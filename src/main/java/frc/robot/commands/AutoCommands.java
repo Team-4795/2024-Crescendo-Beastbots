@@ -56,14 +56,17 @@ public class AutoCommands {
                 () -> Pivot.getInstance().setVelocity(-0.5),
                 () -> Pivot.getInstance().setVelocity(0)
             ).withTimeout(1.5),
-            new StartEndCommand(
-                () -> Intake.getInstance().setVelocity(1),
-                () -> Intake.getInstance().setVelocity(0)
-            ).withTimeout(.2),
-            new StartEndCommand(
-                () -> drive.driveVolts(-.5, -.5),
-                () -> drive.driveVolts(0, 0)
-            ).withTimeout(2)
+            new ParallelRaceGroup(
+                new StartEndCommand(
+                    () -> Intake.getInstance().setVelocity(1),
+                    () -> Intake.getInstance().setVelocity(0)
+                ).withTimeout(.2),
+                new StartEndCommand(
+                    () -> drive.driveVolts(-.5, -.5),
+                    () -> drive.driveVolts(0, 0)
+                )
+            )
+            
         );
     }
 

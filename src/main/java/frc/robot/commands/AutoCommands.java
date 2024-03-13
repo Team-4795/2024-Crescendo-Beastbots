@@ -64,9 +64,8 @@ public class AutoCommands {
                 new StartEndCommand(
                     () -> drive.driveVolts(-.5, -.5),
                     () -> drive.driveVolts(0, 0)
-                )
+                ).withTimeout(.35)
             )
-            
         );
     }
 

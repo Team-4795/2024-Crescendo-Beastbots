@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.shooter.Shooter;
 
 public class AutoCommands {
@@ -33,6 +34,36 @@ public class AutoCommands {
                     ).withTimeout(2)
                 )
             )
+        );
+    }
+
+    public Command oneNoteAndPickUp() {
+        return new SequentialCommandGroup(
+            new ParallelRaceGroup(
+                new StartEndCommand(
+                    () -> Shooter.getInstance().setVelocity(1),
+                    () -> Shooter.getInstance().setVelocity(0)
+                ),
+                new SequentialCommandGroup(
+                    new WaitCommand(2),
+                    new StartEndCommand(
+                        () -> Intake.getInstance().setVelocity(1),
+                        () -> Intake.getInstance().setVelocity(0)
+                    ).withTimeout(2)
+                )
+            ),
+            new StartEndCommand(
+                () -> Pivot.getInstance().setVelocity(-0.5),
+                () -> Pivot.getInstance().setVelocity(0)
+            ).withTimeout(1.5),
+            new StartEndCommand(
+                () -> Intake.getInstance().setVelocity(1),
+                () -> Intake.getInstance().setVelocity(0)
+            ).withTimeout(.2),
+            new StartEndCommand(
+                () -> drive.driveVolts(-.5, -.5),
+                () -> drive.driveVolts(0, 0)
+            ).withTimeout(2)
         );
     }
 

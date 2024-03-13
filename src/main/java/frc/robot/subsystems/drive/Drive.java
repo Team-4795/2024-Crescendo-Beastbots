@@ -98,7 +98,7 @@ public class Drive extends SubsystemBase {
     m_PoseEstimator.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
 
     // Update vision
-    m_PoseEstimator.addVisionMeasurement(Vision.getVisionPose(), Vision.getVisionTimestamp());
+    m_PoseEstimator.addVisionMeasurement(Vision.getVisionPose(), 0);
   }
 
   /** Run open loop at the specified voltage. */

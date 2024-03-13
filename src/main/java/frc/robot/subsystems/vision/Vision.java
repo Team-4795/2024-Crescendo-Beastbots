@@ -16,7 +16,7 @@ public class Vision extends SubsystemBase {
         public double yawDeg = 0.0;
         public double pitchDeg = 0.0;
         public double area = 0.0;
-        public LimelightHelpers.PoseEstimate limelightMeasurement;
+        public Pose2d limelightMeasurement;
     }
 
     public Vision(String name) {
@@ -36,11 +36,7 @@ public class Vision extends SubsystemBase {
     }
 
     public Pose2d getVisionPose(){
-        return inputs.limelightMeasurement.pose;
-    }
-
-    public double getVisionTimestamp() {
-        return inputs.limelightMeasurement.timestampSeconds;
+        return inputs.limelightMeasurement;
     }
 
     @Override
@@ -49,7 +45,7 @@ public class Vision extends SubsystemBase {
         inputs.pitchDeg = LimelightHelpers.getTY(name);
         inputs.yawDeg = LimelightHelpers.getTX(name);
 
-        inputs.limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        inputs.limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(name).pose;
 
         Logger.processInputs("Vision", inputs);
         Logger.recordOutput("Vision/Yaw Degrees", inputs.yawDeg);

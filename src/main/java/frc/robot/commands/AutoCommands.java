@@ -33,7 +33,11 @@ public class AutoCommands {
                         () -> Intake.getInstance().setVelocity(0)
                     ).withTimeout(2)
                 )
-            )
+            ),
+            new StartEndCommand(
+                () -> drive.driveVelocity(-1, -1),
+                () -> drive.driveVelocity(0, 0)
+            ).withTimeout(0.5)
         );
     }
 
@@ -62,8 +66,8 @@ public class AutoCommands {
                     () -> Intake.getInstance().setVelocity(0)
                 ).withTimeout(.2),
                 new StartEndCommand(
-                    () -> drive.driveVolts(-.5, -.5),
-                    () -> drive.driveVolts(0, 0)
+                    () -> drive.driveVelocity(-.5, -.5),
+                    () -> drive.driveVelocity(0, 0)
                 ).withTimeout(.35)
             )
         );

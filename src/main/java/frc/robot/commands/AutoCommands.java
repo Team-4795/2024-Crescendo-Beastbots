@@ -41,6 +41,22 @@ public class AutoCommands {
         );
     }
 
+    public Command shootOnly() {
+        return new ParallelRaceGroup(
+            new StartEndCommand(
+                () -> Shooter.getInstance().setVelocity(1),
+                () -> Shooter.getInstance().setVelocity(0)
+            ),
+            new SequentialCommandGroup(
+                new WaitCommand(2),
+                new StartEndCommand(
+                    () -> Intake.getInstance().setVelocity(1),
+                    () -> Intake.getInstance().setVelocity(0)
+                ).withTimeout(2)
+            )
+        );
+    }
+
     public Command oneNoteAndPickUp() {
         return new SequentialCommandGroup(
             new ParallelRaceGroup(

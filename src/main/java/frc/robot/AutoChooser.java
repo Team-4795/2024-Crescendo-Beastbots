@@ -19,6 +19,7 @@ public class AutoChooser {
         autoChooser.addOption("One Note", autoCommands.oneNote());
         autoChooser.addOption("One Note and Intake", autoCommands.oneNoteAndPickUp());
         autoChooser.addOption("Shoot only", autoCommands.shootOnly());
+        autoChooser.addOption("taxi", autoCommands.taxi());
     }
 
     public Command get() {

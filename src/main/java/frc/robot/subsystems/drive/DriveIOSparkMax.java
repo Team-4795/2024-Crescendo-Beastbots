@@ -24,6 +24,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 /**
  * NOTE: To use the Spark Flex / NEO Vortex, replace all instances of "CANSparkMax" with
@@ -42,6 +43,7 @@ public class DriveIOSparkMax implements DriveIO {
   private final RelativeEncoder rightEncoder = rightLeader.getEncoder();
   private final SparkPIDController leftPID = leftLeader.getPIDController();
   private final SparkPIDController rightPID = rightLeader.getPIDController();
+  private final DifferentialDrive drive;
 
   private final AHRS imu = new AHRS(SPI.Port.kMXP);
 
@@ -81,6 +83,13 @@ public class DriveIOSparkMax implements DriveIO {
     leftFollower.burnFlash();
     rightFollower.burnFlash();
 
+    drive = new DifferentialDrive(rightLeader::set, leftLeader::set);
+
+  }
+
+  @Override
+  public void driveTank(double leftspeed, double rightspeed) {
+    drive.tankDrive(leftspeed, rightspeed);
   }
 
   @Override

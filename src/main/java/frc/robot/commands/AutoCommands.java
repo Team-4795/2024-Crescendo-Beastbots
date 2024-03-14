@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -19,12 +20,22 @@ public class AutoCommands {
         this.drive = drive;
     }
 
+    public Command taxi() {
+        return new RunCommand(
+            () -> drive.driveVolts(10, 10)
+        ).withTimeout(.35);
+    }
+
     public Command oneNote(){
         return new SequentialCommandGroup(
             new ParallelRaceGroup(
                 new StartEndCommand(
                     () -> Shooter.getInstance().setVelocity(1),
                     () -> Shooter.getInstance().setVelocity(0)
+                ),
+                new StartEndCommand(
+                    () -> Pivot.getInstance().setVelocity(0.5),
+                    () -> Pivot.getInstance().setVelocity(0)
                 ),
                 new SequentialCommandGroup(
                     new WaitCommand(2),
@@ -34,10 +45,9 @@ public class AutoCommands {
                     ).withTimeout(2)
                 )
             ),
-            new StartEndCommand(
-                () -> drive.driveVelocity(-1, -1),
-                () -> drive.driveVelocity(0, 0)
-            ).withTimeout(0.5)
+            new RunCommand(
+                () -> drive.driveVolts(10, 10)
+            ).withTimeout(.35)
         );
     }
 
@@ -46,6 +56,10 @@ public class AutoCommands {
             new StartEndCommand(
                 () -> Shooter.getInstance().setVelocity(1),
                 () -> Shooter.getInstance().setVelocity(0)
+            ),
+            new StartEndCommand(
+                () -> Pivot.getInstance().setVelocity(0.5),
+                () -> Pivot.getInstance().setVelocity(0)
             ),
             new SequentialCommandGroup(
                 new WaitCommand(2),
@@ -64,6 +78,10 @@ public class AutoCommands {
                     () -> Shooter.getInstance().setVelocity(1),
                     () -> Shooter.getInstance().setVelocity(0)
                 ),
+                new StartEndCommand(
+                    () -> Pivot.getInstance().setVelocity(0.5),
+                    () -> Pivot.getInstance().setVelocity(0)
+                ),
                 new SequentialCommandGroup(
                     new WaitCommand(2),
                     new StartEndCommand(
@@ -75,15 +93,14 @@ public class AutoCommands {
             new StartEndCommand(
                 () -> Pivot.getInstance().setVelocity(-0.5),
                 () -> Pivot.getInstance().setVelocity(0)
-            ).withTimeout(1.5),
+            ).withTimeout(1),
             new ParallelRaceGroup(
                 new StartEndCommand(
                     () -> Intake.getInstance().setVelocity(1),
                     () -> Intake.getInstance().setVelocity(0)
-                ).withTimeout(.2),
-                new StartEndCommand(
-                    () -> drive.driveVelocity(-.5, -.5),
-                    () -> drive.driveVelocity(0, 0)
+                ),
+                new RunCommand(
+                    () -> drive.driveVolts(10, 10)
                 ).withTimeout(.35)
             )
         );

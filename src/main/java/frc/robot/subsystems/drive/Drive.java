@@ -55,7 +55,7 @@ public class Drive extends SubsystemBase {
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
 
   private final Vision Vision = new Vision("Limelight");
-  private double voltageLimit = 12;
+  private double voltageLimit = 8;
 
   /** Creates a new Drive. */
   public Drive(DriveIO io) {
@@ -98,7 +98,7 @@ public class Drive extends SubsystemBase {
     m_PoseEstimator.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
 
     // Update vision
-    m_PoseEstimator.addVisionMeasurement(Vision.getVisionPose(), 0);
+    // m_PoseEstimator.addVisionMeasurement(Vision.getVisionPose(), 0);
   }
 
   /** Run open loop at the specified voltage. */
@@ -132,6 +132,10 @@ public class Drive extends SubsystemBase {
   /** Stops the drive. */
   public void stop() {
     io.setVoltage(0.0, 0.0);
+  }
+
+  public void driveTank(double leftspeed, double rightspeed){
+    io.driveTank(leftspeed, rightspeed);
   }
 
   /** Returns the current odometry pose in meters. */

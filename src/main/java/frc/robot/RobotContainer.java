@@ -91,10 +91,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    drive.setDefaultCommand(Commands.run(
-      () -> drive.driveArcade(OI.driveController.getRightY(), OI.driveController.getLeftX()), drive
-    ));  
-
     OI.opController.leftBumper().whileTrue(Commands.startEnd(
       () -> Intake.getInstance().setVelocity(1), 
       () -> Intake.getInstance().setVelocity(0)
@@ -134,6 +130,12 @@ public class RobotContainer {
       () -> Shooter.getInstance().setVelocity(0.5),
       () -> Shooter.getInstance().setVelocity(0)
     ));
+  }
+
+  public void teleopInit() {
+    drive.setDefaultCommand(Commands.run(
+      () -> drive.driveArcade(OI.driveController.getRightY(), OI.driveController.getLeftX()), drive
+    ));  
   }
 
   /**

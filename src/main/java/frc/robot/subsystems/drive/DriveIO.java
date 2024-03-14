@@ -13,8 +13,9 @@
 
 package frc.robot.subsystems.drive;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public interface DriveIO {
   @AutoLog
@@ -43,5 +44,8 @@ public interface DriveIO {
       double leftRadPerSec, double rightRadPerSec, double leftFFVolts, double rightFFVolts) {}
 
   public default void zeroHeading() {
+  }
+
+  public default void driveTank(double leftspeed, double rightspeed) {
   }
 }

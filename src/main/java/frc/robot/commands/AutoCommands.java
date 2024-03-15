@@ -26,31 +26,6 @@ public class AutoCommands {
         ).withTimeout(.35);
     }
 
-    public Command oneNote(){
-        return new SequentialCommandGroup(
-            new ParallelRaceGroup(
-                new StartEndCommand(
-                    () -> Shooter.getInstance().setVelocity(1),
-                    () -> Shooter.getInstance().setVelocity(0)
-                ),
-                new StartEndCommand(
-                    () -> Pivot.getInstance().setVelocity(0.5),
-                    () -> Pivot.getInstance().setVelocity(0)
-                ),
-                new SequentialCommandGroup(
-                    new WaitCommand(2),
-                    new StartEndCommand(
-                        () -> Intake.getInstance().setVelocity(1),
-                        () -> Intake.getInstance().setVelocity(0)
-                    ).withTimeout(2)
-                )
-            ),
-            new RunCommand(
-                () -> drive.driveVolts(10, 10)
-            ).withTimeout(.35)
-        );
-    }
-
     public Command shootOnly() {
         return new ParallelRaceGroup(
             new StartEndCommand(
@@ -71,25 +46,16 @@ public class AutoCommands {
         );
     }
 
+    public Command oneNote(){
+        return new SequentialCommandGroup(
+            shootOnly(),
+            taxi()
+        );
+    }
+
     public Command oneNoteAndPickUp() {
         return new SequentialCommandGroup(
-            new ParallelRaceGroup(
-                new StartEndCommand(
-                    () -> Shooter.getInstance().setVelocity(1),
-                    () -> Shooter.getInstance().setVelocity(0)
-                ),
-                new StartEndCommand(
-                    () -> Pivot.getInstance().setVelocity(0.5),
-                    () -> Pivot.getInstance().setVelocity(0)
-                ),
-                new SequentialCommandGroup(
-                    new WaitCommand(2),
-                    new StartEndCommand(
-                        () -> Intake.getInstance().setVelocity(1),
-                        () -> Intake.getInstance().setVelocity(0)
-                    ).withTimeout(2)
-                )
-            ),
+            shootOnly(),
             new StartEndCommand(
                 () -> Pivot.getInstance().setVelocity(-0.5),
                 () -> Pivot.getInstance().setVelocity(0)
@@ -99,10 +65,18 @@ public class AutoCommands {
                     () -> Intake.getInstance().setVelocity(1),
                     () -> Intake.getInstance().setVelocity(0)
                 ),
-                new RunCommand(
-                    () -> drive.driveVolts(10, 10)
-                ).withTimeout(.35)
+                taxi()
             )
+        );
+    }
+
+    public Command twoNote() {
+        return new SequentialCommandGroup(
+            oneNoteAndPickUp(),
+            new RunCommand(
+                () -> drive.driveVolts(-10, -10)
+            ).withTimeout(.35),
+            shootOnly()
         );
     }
 

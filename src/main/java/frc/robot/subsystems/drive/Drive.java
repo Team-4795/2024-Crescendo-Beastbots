@@ -21,12 +21,14 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.kinematics.WheelPositions;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -39,12 +41,12 @@ import frc.robot.util.LocalADStarAK;
 
 public class Drive extends SubsystemBase {
   public static final double WHEEL_RADIUS = Units.inchesToMeters(3.0);
-  public static final double TRACK_WIDTH = Units.inchesToMeters(26.0);
+  public static final double TRACK_WIDTH = Units.inchesToMeters(30.0);
 
   // TODO: NON-SIM FEEDFORWARD GAINS MUST BE TUNED
   // Consider using SysId routines defined in RobotContainer
-  private static final double KS = Constants.currentMode == Mode.SIM ? 0.0 : 0.0;
-  private static final double KV = Constants.currentMode == Mode.SIM ? 0.227 : 0.0;
+  private static final double KS = Constants.currentMode == Mode.SIM ? 0.0 : 0;
+  private static final double KV = Constants.currentMode == Mode.SIM ? 0.227 : 2.56;
 
   private final DriveIO io;
   private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
@@ -55,7 +57,7 @@ public class Drive extends SubsystemBase {
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
 
   private final Vision Vision = new Vision("Limelight");
-  private double voltageLimit = 8;
+  private double voltageLimit = 6;
 
   /** Creates a new Drive. */
   public Drive(DriveIO io) {
@@ -104,6 +106,10 @@ public class Drive extends SubsystemBase {
   /** Run open loop at the specified voltage. */
   public void driveVolts(double leftVolts, double rightVolts) {
     io.setVoltage(leftVolts, rightVolts);
+  }
+
+  public void driveClosedLoop() {
+    io.setVelocity(WHEEL_RADIUS, TRACK_WIDTH, KV, KS);
   }
 
   /** Run closed loop at the specified voltage. */
@@ -165,6 +171,11 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput
   public double getLeftVelocityMetersPerSec() {
     return inputs.leftVelocityRadPerSec * WHEEL_RADIUS;
+  }
+
+  @AutoLogOutput 
+  public double getVelocityDifferenceMetersPerSec() {
+    return (inputs.leftVelocityRadPerSec * WHEEL_RADIUS) - (inputs.rightVelocityRadPerSec * WHEEL_RADIUS);
   }
 
   /** Returns the velocity of the right wheels in meters/second. */

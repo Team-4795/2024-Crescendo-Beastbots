@@ -32,8 +32,12 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  */
 public class DriveIOSparkMax implements DriveIO {
   private static final double GEAR_RATIO = 10.0;
-  private static final double KP = 1.0; // TODO: MUST BE TUNED, consider using REV Hardware Client
-  private static final double KD = 0.0; // TODO: MUST BE TUNED, consider using REV Hardware Client
+  private static final double lKP = 2.5; // TODO: MUST BE TUNED, consider using REV Hardware Client
+  private static final double lKD = 0; // TODO: MUST BE TUNED, consider using REV Hardware Client
+
+  private static final double rKP = 1; // TODO: MUST BE TUNED, consider using REV Hardware Client
+  private static final double rKD = 0;
+   // TODO: MUST BE TUNED, consider using REV Hardware Client
 
   private final CANSparkMax leftLeader = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax rightLeader = new CANSparkMax(2, MotorType.kBrushless);
@@ -73,10 +77,10 @@ public class DriveIOSparkMax implements DriveIO {
     leftLeader.setSmartCurrentLimit(60);
     rightLeader.setSmartCurrentLimit(60);
 
-    leftPID.setP(KP);
-    leftPID.setD(KD);
-    rightPID.setP(KP);
-    rightPID.setD(KD);
+    leftPID.setP(lKP);
+    leftPID.setD(lKD);
+    rightPID.setP(rKP);
+    rightPID.setD(rKD);
 
     leftLeader.burnFlash();
     rightLeader.burnFlash();
@@ -104,8 +108,8 @@ public class DriveIOSparkMax implements DriveIO {
     inputs.rightPositionRad = Units.rotationsToRadians(rightEncoder.getPosition() / GEAR_RATIO);
     inputs.rightVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(rightEncoder.getVelocity() / GEAR_RATIO);
-    inputs.leftAppliedVolts = rightLeader.getAppliedOutput() * rightLeader.getBusVoltage();
-    inputs.leftCurrentAmps =
+    inputs.rightAppliedVolts = rightLeader.getAppliedOutput() * rightLeader.getBusVoltage();
+    inputs.rightCurrentAmps =
         new double[] {rightLeader.getOutputCurrent(), rightFollower.getOutputCurrent()};
 
     inputs.gyroYaw = Rotation2d.fromDegrees(imu.getYaw());

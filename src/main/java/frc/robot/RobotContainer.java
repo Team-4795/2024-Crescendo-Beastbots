@@ -114,8 +114,8 @@ public class RobotContainer {
       () -> Pivot.getInstance().setVelocity(0)
     ));
 
-    OI.opController.b().whileTrue(Commands.startEnd(
-      () -> Shooter.getInstance().setVelocity(-1), 
+    OI.opController.a().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setVelocity(0.5), 
       () -> Shooter.getInstance().setVelocity(0)
     ));
 
@@ -129,10 +129,14 @@ public class RobotContainer {
       () -> drive.setVoltageLimit(12)
     ));
 
-    OI.opController.a().whileTrue(Commands.startEnd(
-      () -> Shooter.getInstance().setVelocity(0.5),
+    OI.opController.b().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setVelocity(-1),
       () -> Shooter.getInstance().setVelocity(0)
     ));
+
+    OI.opController.povUp().onTrue(
+      autoCommands.shootOnly()
+    );
   }
 
   public void teleopInit() {

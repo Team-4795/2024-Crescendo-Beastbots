@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -22,8 +23,21 @@ public class AutoCommands {
 
     public Command taxi() {
         return new RunCommand(
-            () -> drive.driveVolts(10, 10)
-        ).withTimeout(.35);
+            () -> drive.driveVelocity(10, 10)
+        ).withTimeout(1.5);
+    }
+
+    public Command shootTaxiAmpSide() {
+        return new SequentialCommandGroup(
+            shootOnly(), 
+            new RunCommand(
+                () -> drive.driveArcade(0.5, 0)
+            ).withTimeout(1),
+            new RunCommand(
+                () -> drive.driveArcade(0, -0.5)
+            ).withTimeout(1),
+            taxi()
+        );
     }
 
     public Command shootOnly() {
@@ -40,10 +54,10 @@ public class AutoCommands {
                 new WaitCommand(2),
                 new StartEndCommand(
                     () -> Intake.getInstance().setVelocity(1),
-                    () -> Intake.getInstance().setVelocity(0)
+                  () -> Intake.getInstance().setVelocity(0)
                 ).withTimeout(2)
             )
-        );
+         );
     }
 
     public Command oneNote(){
@@ -65,7 +79,9 @@ public class AutoCommands {
                     () -> Intake.getInstance().setVelocity(1),
                     () -> Intake.getInstance().setVelocity(0)
                 ),
-                taxi()
+                new RunCommand(
+                    () -> drive.driveVelocity(10, 10)
+                ).withTimeout(1)
             )
         );
     }
@@ -74,9 +90,12 @@ public class AutoCommands {
         return new SequentialCommandGroup(
             oneNoteAndPickUp(),
             new RunCommand(
-                () -> drive.driveVolts(-10, -10)
-            ).withTimeout(.35),
-            shootOnly()
+                () -> drive.driveVelocity(-10, -10)
+            ).withTimeout(1),
+            shootOnly(),
+            new RunCommand(
+                () -> drive.driveVelocity(10, 10)
+            ).withTimeout(1)
         );
     }
 

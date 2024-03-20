@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.OI;
 import frc.robot.commands.AutoCommands;
 import frc.robot.commands.NamedCommandManager;
@@ -133,6 +134,12 @@ public class RobotContainer {
       () -> Shooter.getInstance().setVelocity(-1),
       () -> Shooter.getInstance().setVelocity(0)
     ));
+
+    OI.opController.povRight().onTrue(
+      new InstantCommand(
+        () -> Pivot.getInstance().setTargetAngle(0.5)
+      )
+    );
 
     OI.opController.povUp().onTrue(
       autoCommands.shootOnly()

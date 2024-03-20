@@ -19,6 +19,7 @@ public class Pivot extends SubsystemBase {
                     PivotConstants.maxA));
     private double velocity = 0.0;
     private static Pivot instance;
+    private double targetAngle = 0;
 
     private Pivot(PivotIO io) {
         this.io = io;
@@ -38,6 +39,10 @@ public class Pivot extends SubsystemBase {
 
     public void setVelocity(double v) {
         this.velocity = v;
+    }
+
+    public void setTargetAngle(double angle) {
+        targetAngle = angle;
     }
 
     public double getPosition() {
@@ -60,9 +65,8 @@ public class Pivot extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Pivot", inputs);
-        // io.setSpeed(
-        // controller.calculate(inputs.angleRev, targetAngle)
-        // );
+        inputs.targetAngle = targetAngle;
+        velocity = controller.calculate(inputs.angleRad, targetAngle);
         io.setPivotVoltage(MathUtil.clamp(velocity * 12, -12, 12));
     }
 }

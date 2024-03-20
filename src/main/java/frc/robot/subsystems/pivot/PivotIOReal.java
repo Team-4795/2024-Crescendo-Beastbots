@@ -1,6 +1,9 @@
 package frc.robot.subsystems.pivot;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.math.util.Units;
+
 import com.revrobotics.CANSparkMax;
 
 public class PivotIOReal implements PivotIO {
@@ -8,8 +11,6 @@ public class PivotIOReal implements PivotIO {
 
    public PivotIOReal() {
       pivotMotor.setSmartCurrentLimit(PivotConstants.currentLimit);
-      pivotMotor.getEncoder().setVelocityConversionFactor(1 / (2 * Math.PI * 60));
-      pivotMotor.getEncoder().setPositionConversionFactor(1 / 2 * Math.PI);
       pivotMotor.burnFlash();
    } 
 
@@ -26,8 +27,8 @@ public class PivotIOReal implements PivotIO {
    @Override
    public void updateInputs(PivotIOInputs inputs) {
       inputs.appliedVolts = pivotMotor.getBusVoltage() * pivotMotor.getAppliedOutput();
-      inputs.velocityRadPerSec = pivotMotor.getEncoder().getVelocity();
+      inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(pivotMotor.getEncoder().getVelocity());
       inputs.currentOutput = pivotMotor.getOutputCurrent();
-      inputs.angleRad = pivotMotor.getEncoder().getPosition();
+      inputs.angleRad = Units.rotationsToRadians(pivotMotor.getEncoder().getPosition());
    }
 }

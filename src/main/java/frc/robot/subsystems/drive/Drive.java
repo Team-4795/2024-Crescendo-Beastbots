@@ -21,14 +21,12 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.kinematics.WheelPositions;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -62,6 +60,7 @@ public class Drive extends SubsystemBase {
   /** Creates a new Drive. */
   public Drive(DriveIO io) {
     this.io = io;
+  
 
     AutoBuilder.configureRamsete(
         this::getPose,
@@ -95,6 +94,7 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive", inputs);
+    Logger.recordOutput("Odometry/Robot", getPose());
 
     // Update odometry
     m_PoseEstimator.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
@@ -145,7 +145,6 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the current odometry pose in meters. */
-  @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return m_PoseEstimator.getEstimatedPosition();
   }

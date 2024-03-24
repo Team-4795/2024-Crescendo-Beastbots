@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -16,9 +17,11 @@ import frc.robot.subsystems.shooter.Shooter;
 
 public class AutoCommands {
     private Drive drive;
+    private AlignToSpeaker alignToSpeaker;
 
     public AutoCommands(Drive drive) {
         this.drive = drive;
+        this.alignToSpeaker = new AlignToSpeaker();
     }
 
     public Command taxi() {
@@ -100,6 +103,13 @@ public class AutoCommands {
     }
 
     public Command followTestPath() {
-       return AutoBuilder.buildAuto("Example Auto");
+        PathPlannerPath path = PathPlannerPath.fromPathFile("testpath");
+        return new SequentialCommandGroup(
+            new InstantCommand(
+                () -> drive.setPose(path.getStartingDifferentialPose())
+            ),
+            AutoBuilder.followPath(path),
+            alignToSpeaker
+        );
     }
 }

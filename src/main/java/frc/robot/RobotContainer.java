@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.OI;
+import frc.robot.commands.AlignToSpeaker;
 import frc.robot.commands.AutoCommands;
 import frc.robot.commands.NamedCommandManager;
 import frc.robot.subsystems.drive.Drive;
@@ -43,8 +44,6 @@ import frc.robot.subsystems.shooter.ShooterIOSim;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
-
   // Auto
   private final AutoCommands autoCommands;
   private final AutoChooser autoChooser;
@@ -53,7 +52,7 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        drive = new Drive(new DriveIOSparkMax());
+        Drive.init(new DriveIOSparkMax());
         Pivot.init(new PivotIOReal());
         Intake.init(new IntakeIOReal());
         Shooter.init(new ShooterIOReal());
@@ -61,24 +60,24 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        drive = new Drive(new DriveIOSim());
+        Drive.init(new DriveIOSim());
         Pivot.init(new PivotIOSim());
         Intake.init(new IntakeIOSim());
         Shooter.init(new ShooterIOSim());
         break;
 
       default:
-        drive = new Drive(new DriveIO() {});
+        Drive.init(new DriveIO() {});
         Pivot.init(new PivotIOReal());
         break;
     }
 
     // Register named commands
 
-    (new NamedCommandManager(drive)).register();
+    (new NamedCommandManager(Drive.getInstance())).register();
 
     // Set up auto commands.
-    autoCommands = new AutoCommands(drive);
+    autoCommands = new AutoCommands(Drive.getInstance());
     autoChooser = new AutoChooser(autoCommands);
 
     // Configure the button bindings
@@ -91,9 +90,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    drive.setDefaultCommand(Commands.run(
-      () -> drive.driveArcade(OI.driveController.getRightY(), OI.driveController.getLeftX()), drive
+    Drive.getInstance().setDefaultCommand(Commands.run(
+      () -> Drive.getInstance().driveArcade(OI.driveController.getRightY(), OI.driveController.getLeftX()), Drive.getInstance()
     ));  
+
+    OI.driveController.rightBumper().onTrue(new AlignToSpeaker());
     
     OI.opController.leftBumper().whileTrue(Commands.startEnd(
       () -> Intake.getInstance().setVelocity(1), 
@@ -126,8 +127,8 @@ public class RobotContainer {
     ));
 
     OI.driveController.leftBumper().whileTrue(Commands.startEnd(
-      () -> drive.setVoltageLimit(Constants.slowModeVoltageLimit), 
-      () -> drive.setVoltageLimit(12)
+      () -> Drive.getInstance().setVoltageLimit(Constants.slowModeVoltageLimit), 
+      () -> Drive.getInstance().setVoltageLimit(12)
     ));
 
     OI.opController.b().whileTrue(Commands.startEnd(

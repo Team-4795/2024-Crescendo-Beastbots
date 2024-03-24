@@ -56,13 +56,27 @@ public class Drive extends SubsystemBase {
 
   private final Vision Vision = new Vision("Limelight");
   private double voltageLimit = 6;
+  private static Drive instance;
+
+
+  public static Drive init(DriveIO io) {
+        if (instance == null) {
+            instance = new Drive(io);
+        }
+        return instance;
+    }
+
+    public static Drive getInstance() {
+      return instance;
+    }
+
 
   /** Creates a new Drive. */
   public Drive(DriveIO io) {
     this.io = io;
   
 
-    AutoBuilder.configureRamsete(
+    AutoBuilder.configureRamsete( 
         this::getPose,
         this::setPose,
         () ->
@@ -116,6 +130,7 @@ public class Drive extends SubsystemBase {
   public void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
     Logger.recordOutput("Drive/LeftVelocitySetpointMetersPerSec", leftMetersPerSec);
     Logger.recordOutput("Drive/RightVelocitySetpointMetersPerSec", rightMetersPerSec);
+    
     double leftRadPerSec = leftMetersPerSec / WHEEL_RADIUS;
     double rightRadPerSec = rightMetersPerSec / WHEEL_RADIUS;
     io.setVelocity(

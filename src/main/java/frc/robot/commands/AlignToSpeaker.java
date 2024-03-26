@@ -15,11 +15,11 @@ public class AlignToSpeaker extends Command {
     private PIDController controller = new PIDController(1, 0, 0);
     private double output;
     public AlignToSpeaker() {
+
     }
 
     @Override
     public void execute() {
-        double realAngle = Drive.getInstance().getPose().getRotation().getRadians();
         x = Drive.getInstance().getPose().getX() - 0.5;
         y = Drive.getInstance().getPose().getY() - 5.54;
         angle = Math.atan2(y, x) - (y > 0 ? Math.PI : -Math.PI);

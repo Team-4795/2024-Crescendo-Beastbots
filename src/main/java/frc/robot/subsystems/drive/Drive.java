@@ -55,7 +55,7 @@ public class Drive extends SubsystemBase {
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
 
   private final Vision Vision = new Vision("Limelight");
-  private double voltageLimit = 6;
+  private double voltageLimit = 3;
   private static Drive instance;
 
 

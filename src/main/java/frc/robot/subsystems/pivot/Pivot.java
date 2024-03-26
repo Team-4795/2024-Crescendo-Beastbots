@@ -19,11 +19,13 @@ public class Pivot extends SubsystemBase {
                     PivotConstants.maxA));
     private double velocity = 0.0;
     private static Pivot instance;
-    private double targetAngle = 0;
+    private double targetAngle = 3;
+    private boolean override = false;
 
     private Pivot(PivotIO io) {
         this.io = io;
         io.updateInputs(inputs);
+        io.setEncoderPosition(3);
     }
 
     public static Pivot init(PivotIO io) {
@@ -61,12 +63,22 @@ public class Pivot extends SubsystemBase {
         return inputs.currentOutput;
     }
 
+    public void setOverride(boolean b) {
+        override = b;
+    }
+
+    public void setEncoderPosition(double value) {
+        io.setEncoderPosition(value);
+    }
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Pivot", inputs);
         inputs.targetAngle = targetAngle;
-        velocity = controller.calculate(inputs.angleRad, targetAngle);
+        if(!override) {
+            velocity = controller.calculate(inputs.angleRad, targetAngle);
+        }
         io.setPivotVoltage(MathUtil.clamp(velocity * 12, -12, 12));
     }
 }

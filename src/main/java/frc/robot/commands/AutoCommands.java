@@ -17,11 +17,9 @@ import frc.robot.subsystems.shooter.Shooter;
 
 public class AutoCommands {
     private Drive drive;
-    private AlignToSpeaker alignToSpeaker;
 
     public AutoCommands(Drive drive) {
         this.drive = drive;
-        this.alignToSpeaker = new AlignToSpeaker();
     }
 
     public Command taxi() {
@@ -109,7 +107,7 @@ public class AutoCommands {
                 () -> drive.setPose(path.getStartingDifferentialPose())
             ),
             AutoBuilder.followPath(path),
-            alignToSpeaker
+            new AlignToSpeaker()
         );
     }
 }

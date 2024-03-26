@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.OI;
-import frc.robot.commands.AlignToSpeaker;
 import frc.robot.commands.AutoCommands;
+import frc.robot.commands.CommandManager;
 import frc.robot.commands.NamedCommandManager;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
@@ -94,12 +94,14 @@ public class RobotContainer {
       () -> Drive.getInstance().driveArcade(OI.driveController.getRightY(), OI.driveController.getLeftX()), Drive.getInstance()
     ));  
 
-    OI.driveController.rightBumper().onTrue(new AlignToSpeaker());
+    OI.driveController.rightBumper().onTrue(CommandManager.alignToSpeaker);
     
     OI.opController.leftBumper().whileTrue(Commands.startEnd(
       () -> Intake.getInstance().setVelocity(1), 
       () -> Intake.getInstance().setVelocity(0)
     ));
+
+    OI.opController.y().onTrue(new InstantCommand(() -> Pivot.getInstance().setEncoderPosition(0)));
 
     OI.opController.rightBumper().whileTrue(Commands.startEnd(
       () -> Shooter.getInstance().setVelocity(1),
@@ -107,12 +109,18 @@ public class RobotContainer {
     ));
 
     OI.opController.leftTrigger().whileTrue(Commands.startEnd(
-      () -> Pivot.getInstance().setVelocity(-0.5), 
+      () -> {
+        Pivot.getInstance().setOverride(true);
+        Pivot.getInstance().setVelocity(-0.5);
+      },
       () -> Pivot.getInstance().setVelocity(0)
     ));
 
     OI.opController.rightTrigger().whileTrue(Commands.startEnd(
-      () -> Pivot.getInstance().setVelocity(0.5), 
+      () -> {
+        Pivot.getInstance().setOverride(true);
+        Pivot.getInstance().setVelocity(0.5);
+      }, 
       () -> Pivot.getInstance().setVelocity(0)
     ));
 
@@ -138,7 +146,19 @@ public class RobotContainer {
 
     OI.opController.povRight().onTrue(
       new InstantCommand(
-        () -> Pivot.getInstance().setTargetAngle(0.5)
+        () -> {
+          Pivot.getInstance().setOverride(false);
+          Pivot.getInstance().setTargetAngle(3);
+        }
+      )
+    );
+    
+    OI.opController.povLeft().onTrue(
+      new InstantCommand(
+        () -> {
+          Pivot.getInstance().setOverride(false);
+          Pivot.getInstance().setTargetAngle(0);
+        }
       )
     );
 

@@ -20,4 +20,8 @@ public interface PivotIO {
 
     public default void setSpeed(double speed) {
     }
+    
+    public default void setEncoderPosition(double value) {
+
+    }
 }

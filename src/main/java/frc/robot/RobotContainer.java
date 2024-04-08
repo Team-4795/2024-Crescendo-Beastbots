@@ -77,7 +77,7 @@ public class RobotContainer {
     (new NamedCommandManager(Drive.getInstance())).register();
 
     // Set up auto commands.
-    autoCommands = new AutoCommands(Drive.getInstance());
+    autoCommands = new AutoCommands();
     autoChooser = new AutoChooser(autoCommands);
 
     // Configure the button bindings
@@ -104,7 +104,7 @@ public class RobotContainer {
     OI.opController.y().onTrue(new InstantCommand(() -> Pivot.getInstance().setEncoderPosition(0)));
 
     OI.opController.rightBumper().whileTrue(Commands.startEnd(
-      () -> Shooter.getInstance().setVelocity(1),
+      () -> Shooter.getInstance().setVelocity(0.5),
       () -> Shooter.getInstance().setVelocity(0)
     ));
 
@@ -162,9 +162,9 @@ public class RobotContainer {
       )
     );
 
-    OI.opController.povUp().onTrue(
-      autoCommands.shootOnly()
-    );
+    // OI.opController.povUp().onTrue(
+    //   autoCommands.shootOnly()
+    // );
   }
 
   public void teleopInit() {

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public final class Constants {
   public static final Mode currentMode = Mode.REAL;
+  public static final int controllerCount = 1;
   public static final double DT = 0.02;
 
   public static enum Mode {

@@ -76,9 +76,7 @@ public class Pivot extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Pivot", inputs);
         inputs.targetAngle = targetAngle;
-        if(!override) {
-            velocity = controller.calculate(inputs.angleRad, targetAngle);
-        }
+        // velocity = controller.calculate(inputs.angleRad, targetAngle);
         io.setPivotVoltage(MathUtil.clamp(velocity * 12, -12, 12));
     }
 }

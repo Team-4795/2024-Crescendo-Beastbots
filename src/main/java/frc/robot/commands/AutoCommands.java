@@ -16,98 +16,71 @@ import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.shooter.Shooter;
 
 public class AutoCommands {
-    private Drive drive;
-
-    public AutoCommands(Drive drive) {
-        this.drive = drive;
-    }
-
     public Command taxi() {
         return new RunCommand(
-            () -> drive.driveVelocity(10, 10)
-        ).withTimeout(1.5);
+                () -> Drive.getInstance().driveVelocity(10, 10)).withTimeout(1.5);
     }
 
     public Command shootTaxiAmpSide() {
         return new SequentialCommandGroup(
-            shootOnly(), 
-            new RunCommand(
-                () -> drive.driveArcade(0.5, 0)
-            ).withTimeout(1),
-            new RunCommand(
-                () -> drive.driveArcade(0, -0.5)
-            ).withTimeout(1),
-            taxi()
-        );
+                shootOnly(),
+                new RunCommand(
+                        () -> Drive.getInstance().driveArcade(0.5, 0)).withTimeout(1),
+                new RunCommand(
+                        () -> Drive.getInstance().driveArcade(0, -0.5)).withTimeout(1),
+                taxi());
     }
 
     public Command shootOnly() {
         return new ParallelRaceGroup(
-            new StartEndCommand(
-                () -> Shooter.getInstance().setVelocity(1),
-                () -> Shooter.getInstance().setVelocity(0)
-            ),
-            new StartEndCommand(
-                () -> Pivot.getInstance().setVelocity(0.5),
-                () -> Pivot.getInstance().setVelocity(0)
-            ),
-            new SequentialCommandGroup(
-                new WaitCommand(2),
                 new StartEndCommand(
-                    () -> Intake.getInstance().setVelocity(1),
-                  () -> Intake.getInstance().setVelocity(0)
-                ).withTimeout(2)
-            )
-         );
+                        () -> Shooter.getInstance().setVelocity(1),
+                        () -> Shooter.getInstance().setVelocity(0)),
+                new StartEndCommand(
+                        () -> Pivot.getInstance().setVelocity(0.5),
+                        () -> Pivot.getInstance().setVelocity(0)),
+                new SequentialCommandGroup(
+                        new WaitCommand(2),
+                        new StartEndCommand(
+                                () -> Intake.getInstance().setVelocity(1),
+                                () -> Intake.getInstance().setVelocity(0)).withTimeout(2)));
     }
 
-    public Command oneNote(){
+    public Command oneNote() {
         return new SequentialCommandGroup(
-            shootOnly(),
-            taxi()
-        );
+                shootOnly(),
+                taxi());
     }
 
     public Command oneNoteAndPickUp() {
         return new SequentialCommandGroup(
-            shootOnly(),
-            new StartEndCommand(
-                () -> Pivot.getInstance().setVelocity(-0.5),
-                () -> Pivot.getInstance().setVelocity(0)
-            ).withTimeout(1),
-            new ParallelRaceGroup(
+                shootOnly(),
                 new StartEndCommand(
-                    () -> Intake.getInstance().setVelocity(1),
-                    () -> Intake.getInstance().setVelocity(0)
-                ),
-                new RunCommand(
-                    () -> drive.driveVelocity(10, 10)
-                ).withTimeout(1)
-            )
-        );
+                        () -> Pivot.getInstance().setVelocity(-0.5),
+                        () -> Pivot.getInstance().setVelocity(0)).withTimeout(1),
+                new ParallelRaceGroup(
+                        new StartEndCommand(
+                                () -> Intake.getInstance().setVelocity(1),
+                                () -> Intake.getInstance().setVelocity(0)),
+                        new RunCommand(
+                                () -> Drive.getInstance().driveVelocity(10, 10)).withTimeout(1)));
     }
 
     public Command twoNote() {
         return new SequentialCommandGroup(
-            oneNoteAndPickUp(),
-            new RunCommand(
-                () -> drive.driveVelocity(-10, -10)
-            ).withTimeout(1),
-            shootOnly(),
-            new RunCommand(
-                () -> drive.driveVelocity(10, 10)
-            ).withTimeout(1)
-        );
+                oneNoteAndPickUp(),
+                new RunCommand(
+                        () -> Drive.getInstance().driveVelocity(-10, -10)).withTimeout(1),
+                shootOnly(),
+                new RunCommand(
+                        () -> Drive.getInstance().driveVelocity(10, 10)).withTimeout(1));
     }
 
     public Command followTestPath() {
         PathPlannerPath path = PathPlannerPath.fromPathFile("testpath");
         return new SequentialCommandGroup(
-            new InstantCommand(
-                () -> drive.setPose(path.getStartingDifferentialPose())
-            ),
-            AutoBuilder.followPath(path),
-            new AlignToSpeaker()
-        );
+                new InstantCommand(
+                        () -> Drive.getInstance().setPose(path.getStartingDifferentialPose())),
+                AutoBuilder.followPath(path));
     }
 }

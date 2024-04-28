@@ -13,24 +13,28 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.FeedForwardCharacterization;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.OI;
+import frc.robot.commands.AutoCommands;
+import frc.robot.commands.CommandManager;
+import frc.robot.commands.NamedCommandManager;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
 import frc.robot.subsystems.drive.DriveIOSim;
 import frc.robot.subsystems.drive.DriveIOSparkMax;
-import frc.robot.subsystems.flywheel.Flywheel;
-import frc.robot.subsystems.flywheel.FlywheelIO;
-import frc.robot.subsystems.flywheel.FlywheelIOSim;
-import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIOReal;
+import frc.robot.subsystems.pivot.PivotIOSim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOReal;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,61 +44,43 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
-  private final Flywheel flywheel;
-
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
-
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardNumber flywheelSpeedInput =
-      new LoggedDashboardNumber("Flywheel Speed", 1500.0);
+  // Auto
+  private final AutoCommands autoCommands;
+  private final AutoChooser autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        // Real robot, instantiate hardware IO implementations
-        drive = new Drive(new DriveIOSparkMax());
-        flywheel = new Flywheel(new FlywheelIOSparkMax());
-        // drive = new Drive(new DriveIOTalonFX());
-        // flywheel = new Flywheel(new FlywheelIOTalonFX());
+        Drive.init(new DriveIOSparkMax());
+        Pivot.init(new PivotIOReal());
+        Intake.init(new IntakeIOReal());
+        Shooter.init(new ShooterIOReal());
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        drive = new Drive(new DriveIOSim());
-        flywheel = new Flywheel(new FlywheelIOSim());
+        Drive.init(new DriveIOSim());
+        Pivot.init(new PivotIOSim());
+        Intake.init(new IntakeIOSim());
+        Shooter.init(new ShooterIOSim());
         break;
 
       default:
-        // Replayed robot, disable IO implementations
-        drive = new Drive(new DriveIO() {});
-        flywheel = new Flywheel(new FlywheelIO() {});
+        Drive.init(new DriveIO() {});
+        Pivot.init(new PivotIOReal());
         break;
     }
 
-    // Set up auto routines
-    NamedCommands.registerCommand(
-        "Run Flywheel",
-        Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
-            .withTimeout(5.0));
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // Register named commands
 
-    // Set up feedforward characterization
-    autoChooser.addOption(
-        "Drive FF Characterization",
-        new FeedForwardCharacterization(
-            drive, (volts) -> drive.driveVolts(volts, volts), drive::getCharacterizationVelocity));
-    autoChooser.addOption(
-        "Flywheel FF Characterization",
-        new FeedForwardCharacterization(
-            flywheel, flywheel::runVolts, flywheel::getCharacterizationVelocity));
+    (new NamedCommandManager(Drive.getInstance())).register();
+
+    // Set up auto commands.
+    autoCommands = new AutoCommands();
+    autoChooser = new AutoChooser(autoCommands);
 
     // Configure the button bindings
-    configureButtonBindings();
   }
 
   /**
@@ -104,14 +90,85 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    drive.setDefaultCommand(
-        Commands.run(
-            () -> drive.driveArcade(-controller.getLeftY(), controller.getLeftX()), drive));
-    controller
-        .a()
-        .whileTrue(
-            Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
+    Drive.getInstance().setDefaultCommand(Commands.run(
+      () -> Drive.getInstance().driveArcade(OI.driveController.getRightY(), OI.driveController.getLeftX()), Drive.getInstance()
+    ));  
+
+    OI.driveController.rightBumper().onTrue(CommandManager.alignToSpeaker);
+    
+    OI.opController.leftBumper().whileTrue(Commands.startEnd(
+      () -> Intake.getInstance().setVelocity(1), 
+      () -> Intake.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.y().onTrue(new InstantCommand(() -> Pivot.getInstance().setEncoderPosition(0)));
+
+    OI.opController.rightBumper().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setVelocity(0.5),
+      () -> Shooter.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.leftTrigger().whileTrue(Commands.startEnd(
+      () -> {
+        Pivot.getInstance().setOverride(true);
+        Pivot.getInstance().setVelocity(-0.5);
+      },
+      () -> Pivot.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.rightTrigger().whileTrue(Commands.startEnd(
+      () -> {
+        Pivot.getInstance().setOverride(true);
+        Pivot.getInstance().setVelocity(0.5);
+      }, 
+      () -> Pivot.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.a().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setVelocity(0.5), 
+      () -> Shooter.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.povDown().whileTrue(Commands.startEnd(
+      () -> Intake.getInstance().setVelocity(-1), 
+      () -> Intake.getInstance().setVelocity(0)
+    ));
+
+    OI.driveController.leftBumper().whileTrue(Commands.startEnd(
+      () -> Drive.getInstance().setVoltageLimit(Constants.slowModeVoltageLimit), 
+      () -> Drive.getInstance().setVoltageLimit(12)
+    ));
+
+    OI.opController.b().whileTrue(Commands.startEnd(
+      () -> Shooter.getInstance().setVelocity(-1),
+      () -> Shooter.getInstance().setVelocity(0)
+    ));
+
+    OI.opController.povRight().onTrue(
+      new InstantCommand(
+        () -> {
+          Pivot.getInstance().setOverride(false);
+          Pivot.getInstance().setTargetAngle(3);
+        }
+      )
+    );
+    
+    OI.opController.povLeft().onTrue(
+      new InstantCommand(
+        () -> {
+          Pivot.getInstance().setOverride(false);
+          Pivot.getInstance().setTargetAngle(0);
+        }
+      )
+    );
+
+    // OI.opController.povUp().onTrue(
+    //   autoCommands.shootOnly()
+    // );
+  }
+
+  public void teleopInit() {
+    configureButtonBindings();
   }
 
   /**

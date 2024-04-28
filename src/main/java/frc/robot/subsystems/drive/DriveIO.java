@@ -13,8 +13,9 @@
 
 package frc.robot.subsystems.drive;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public interface DriveIO {
   @AutoLog
@@ -41,4 +42,10 @@ public interface DriveIO {
   /** Run closed loop at the specified velocity. */
   public default void setVelocity(
       double leftRadPerSec, double rightRadPerSec, double leftFFVolts, double rightFFVolts) {}
+
+  public default void zeroHeading() {
+  }
+
+  public default void driveTank(double leftspeed, double rightspeed) {
+  }
 }

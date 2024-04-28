@@ -1,20 +1,20 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 2,
+      "y": 2
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "ZeroHeading"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "testpath"
+            "pathName": "go to 2nd ring, intake and shoot"
           }
         }
       ]

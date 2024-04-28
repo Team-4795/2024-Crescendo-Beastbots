@@ -13,15 +13,19 @@
 
 package frc.robot.subsystems.drive;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,32 +34,49 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   public static final double WHEEL_RADIUS = Units.inchesToMeters(3.0);
-  public static final double TRACK_WIDTH = Units.inchesToMeters(26.0);
+  public static final double TRACK_WIDTH = Units.inchesToMeters(30.0);
 
   // TODO: NON-SIM FEEDFORWARD GAINS MUST BE TUNED
   // Consider using SysId routines defined in RobotContainer
-  private static final double KS = Constants.currentMode == Mode.SIM ? 0.0 : 0.0;
-  private static final double KV = Constants.currentMode == Mode.SIM ? 0.227 : 0.0;
+  private static final double KS = Constants.currentMode == Mode.SIM ? 0.0 : 0;
+  private static final double KV = Constants.currentMode == Mode.SIM ? 0.227 : 2.56;
 
   private final DriveIO io;
   private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
-  private final DifferentialDriveOdometry odometry =
-      new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0);
   private final DifferentialDriveKinematics kinematics =
       new DifferentialDriveKinematics(TRACK_WIDTH);
+  private final DifferentialDrivePoseEstimator m_PoseEstimator =
+      new DifferentialDrivePoseEstimator(kinematics, new Rotation2d(), 0.0, 0.0, new Pose2d());
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
+
+  private final Vision Vision = new Vision("Limelight");
+  private double voltageLimit = 3;
+  private static Drive instance;
+
+
+  public static Drive init(DriveIO io) {
+        if (instance == null) {
+            instance = new Drive(io);
+        }
+        return instance;
+    }
+
+    public static Drive getInstance() {
+      return instance;
+    }
+
 
   /** Creates a new Drive. */
   public Drive(DriveIO io) {
     this.io = io;
+  
 
-    AutoBuilder.configureRamsete(
+    AutoBuilder.configureRamsete( 
         this::getPose,
         this::setPose,
         () ->
@@ -87,9 +108,13 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive", inputs);
+    Logger.recordOutput("Odometry/Robot", getPose());
 
     // Update odometry
-    odometry.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
+    m_PoseEstimator.update(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters());
+
+    // Update vision
+    // m_PoseEstimator.addVisionMeasurement(Vision.getVisionPose(), 0);
   }
 
   /** Run open loop at the specified voltage. */
@@ -97,10 +122,15 @@ public class Drive extends SubsystemBase {
     io.setVoltage(leftVolts, rightVolts);
   }
 
+  public void driveClosedLoop() {
+    io.setVelocity(WHEEL_RADIUS, TRACK_WIDTH, KV, KS);
+  }
+
   /** Run closed loop at the specified voltage. */
   public void driveVelocity(double leftMetersPerSec, double rightMetersPerSec) {
     Logger.recordOutput("Drive/LeftVelocitySetpointMetersPerSec", leftMetersPerSec);
     Logger.recordOutput("Drive/RightVelocitySetpointMetersPerSec", rightMetersPerSec);
+    
     double leftRadPerSec = leftMetersPerSec / WHEEL_RADIUS;
     double rightRadPerSec = rightMetersPerSec / WHEEL_RADIUS;
     io.setVelocity(
@@ -113,7 +143,11 @@ public class Drive extends SubsystemBase {
   /** Run open loop based on stick positions. */
   public void driveArcade(double xSpeed, double zRotation) {
     var speeds = DifferentialDrive.arcadeDriveIK(xSpeed, zRotation, true);
-    io.setVoltage(speeds.left * 12.0, speeds.right * 12.0);
+    io.setVoltage(speeds.left * voltageLimit, speeds.right * voltageLimit);
+  }
+
+  public void setVoltageLimit(double limit) {
+    this.voltageLimit = limit;
   }
 
   /** Stops the drive. */
@@ -121,15 +155,18 @@ public class Drive extends SubsystemBase {
     io.setVoltage(0.0, 0.0);
   }
 
+  public void driveTank(double leftspeed, double rightspeed){
+    io.driveTank(leftspeed, rightspeed);
+  }
+
   /** Returns the current odometry pose in meters. */
-  @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return m_PoseEstimator.getEstimatedPosition();
   }
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    odometry.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose);
+    m_PoseEstimator.resetPosition(inputs.gyroYaw, getLeftPositionMeters(), getRightPositionMeters(), pose);
   }
 
   /** Returns the position of the left wheels in meters. */
@@ -150,6 +187,11 @@ public class Drive extends SubsystemBase {
     return inputs.leftVelocityRadPerSec * WHEEL_RADIUS;
   }
 
+  @AutoLogOutput 
+  public double getVelocityDifferenceMetersPerSec() {
+    return (inputs.leftVelocityRadPerSec * WHEEL_RADIUS) - (inputs.rightVelocityRadPerSec * WHEEL_RADIUS);
+  }
+
   /** Returns the velocity of the right wheels in meters/second. */
   @AutoLogOutput
   public double getRightVelocityMetersPerSec() {
@@ -159,5 +201,9 @@ public class Drive extends SubsystemBase {
   /** Returns the average velocity in radians/second. */
   public double getCharacterizationVelocity() {
     return (inputs.leftVelocityRadPerSec + inputs.rightVelocityRadPerSec) / 2.0;
+  }
+
+  public void zeroHeading() {
+    io.zeroHeading();
   }
 }

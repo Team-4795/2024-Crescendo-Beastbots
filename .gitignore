@@ -178,3 +178,5 @@ logs/
 ctre_sim/
 
 src/main/java/frc/robot/BuildConstants.java
+
+simgui-ds.json

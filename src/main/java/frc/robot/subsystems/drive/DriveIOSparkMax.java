@@ -13,16 +13,18 @@
 
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 /**
  * NOTE: To use the Spark Flex / NEO Vortex, replace all instances of "CANSparkMax" with
@@ -30,8 +32,12 @@ import edu.wpi.first.math.util.Units;
  */
 public class DriveIOSparkMax implements DriveIO {
   private static final double GEAR_RATIO = 10.0;
-  private static final double KP = 1.0; // TODO: MUST BE TUNED, consider using REV Hardware Client
-  private static final double KD = 0.0; // TODO: MUST BE TUNED, consider using REV Hardware Client
+  private static final double lKP = 2.5; // TODO: MUST BE TUNED, consider using REV Hardware Client
+  private static final double lKD = 0; // TODO: MUST BE TUNED, consider using REV Hardware Client
+
+  private static final double rKP = 1; // TODO: MUST BE TUNED, consider using REV Hardware Client
+  private static final double rKD = 0;
+   // TODO: MUST BE TUNED, consider using REV Hardware Client
 
   private final CANSparkMax leftLeader = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax rightLeader = new CANSparkMax(2, MotorType.kBrushless);
@@ -41,15 +47,20 @@ public class DriveIOSparkMax implements DriveIO {
   private final RelativeEncoder rightEncoder = rightLeader.getEncoder();
   private final SparkPIDController leftPID = leftLeader.getPIDController();
   private final SparkPIDController rightPID = rightLeader.getPIDController();
+  private final DifferentialDrive drive;
 
-  private final Pigeon2 pigeon = new Pigeon2(20);
-  private final StatusSignal<Double> yaw = pigeon.getYaw();
+  private final AHRS imu = new AHRS(SPI.Port.kMXP);
 
   public DriveIOSparkMax() {
     leftLeader.restoreFactoryDefaults();
     rightLeader.restoreFactoryDefaults();
     leftFollower.restoreFactoryDefaults();
     rightFollower.restoreFactoryDefaults();
+    
+    leftLeader.setIdleMode(IdleMode.kCoast);
+    rightLeader.setIdleMode(IdleMode.kCoast);
+    leftFollower.setIdleMode(IdleMode.kCoast);
+    rightFollower.setIdleMode(IdleMode.kCoast);
 
     leftLeader.setCANTimeout(250);
     rightLeader.setCANTimeout(250);
@@ -66,20 +77,23 @@ public class DriveIOSparkMax implements DriveIO {
     leftLeader.setSmartCurrentLimit(60);
     rightLeader.setSmartCurrentLimit(60);
 
-    leftPID.setP(KP);
-    leftPID.setD(KD);
-    rightPID.setP(KP);
-    rightPID.setD(KD);
+    leftPID.setP(lKP);
+    leftPID.setD(lKD);
+    rightPID.setP(rKP);
+    rightPID.setD(rKD);
 
     leftLeader.burnFlash();
     rightLeader.burnFlash();
     leftFollower.burnFlash();
     rightFollower.burnFlash();
 
-    pigeon.getConfigurator().apply(new Pigeon2Configuration());
-    pigeon.getConfigurator().setYaw(0.0);
-    yaw.setUpdateFrequency(100.0);
-    pigeon.optimizeBusUtilization();
+    drive = new DifferentialDrive(rightLeader::set, leftLeader::set);
+
+  }
+
+  @Override
+  public void driveTank(double leftspeed, double rightspeed) {
+    drive.tankDrive(leftspeed, rightspeed);
   }
 
   @Override
@@ -94,17 +108,22 @@ public class DriveIOSparkMax implements DriveIO {
     inputs.rightPositionRad = Units.rotationsToRadians(rightEncoder.getPosition() / GEAR_RATIO);
     inputs.rightVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(rightEncoder.getVelocity() / GEAR_RATIO);
-    inputs.leftAppliedVolts = rightLeader.getAppliedOutput() * rightLeader.getBusVoltage();
-    inputs.leftCurrentAmps =
+    inputs.rightAppliedVolts = rightLeader.getAppliedOutput() * rightLeader.getBusVoltage();
+    inputs.rightCurrentAmps =
         new double[] {rightLeader.getOutputCurrent(), rightFollower.getOutputCurrent()};
 
-    inputs.gyroYaw = Rotation2d.fromDegrees(yaw.refresh().getValueAsDouble());
+    inputs.gyroYaw = Rotation2d.fromDegrees(imu.getYaw());
   }
 
   @Override
   public void setVoltage(double leftVolts, double rightVolts) {
     leftLeader.setVoltage(leftVolts);
     rightLeader.setVoltage(rightVolts);
+  }
+
+  @Override
+  public void zeroHeading() {
+    imu.reset();
   }
 
   @Override

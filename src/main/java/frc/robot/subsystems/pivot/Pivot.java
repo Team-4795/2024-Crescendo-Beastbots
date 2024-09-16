@@ -48,7 +48,7 @@ public class Pivot extends SubsystemBase {
     public static Pivot getInstance(){
        return instance;
     }
-
+//periodic runs every 20ms
     @Override
     public void periodic(){
         io.setPivotVoltage(
